@@ -21,7 +21,7 @@ BLOG_AUTHOR = "Ian Henriksen"  # (translatable)
 BLOG_TITLE = "Ian's Blog"  # (translatable)
 # This is the main URL for your site. It will be used
 # in a prominent link
-SITE_URL = "insertinterestingnamehere.github.io"
+SITE_URL = "http://insertinterestingnamehere.github.io/"
 # This is the URL where Nikola's output will be deployed.
 # If not set, defaults to SITE_URL
 # BASE_URL = "insertinterestingnamehere.github.io"
@@ -390,11 +390,11 @@ REDIRECTIONS = []
 
 # For user.github.io OR organization.github.io pages, the DEPLOY branch
 # MUST be 'master', and 'gh-pages' for other repositories.
-# GITHUB_SOURCE_BRANCH = 'master'
-# GITHUB_DEPLOY_BRANCH = 'gh-pages'
+GITHUB_SOURCE_BRANCH = 'sources'
+GITHUB_DEPLOY_BRANCH = 'master'
 
 # The name of the remote where you wish to push to, using github_deploy.
-# GITHUB_REMOTE_NAME = 'origin'
+GITHUB_REMOTE_NAME = 'origin'
 
 # Where the output site should be located
 # If you don't use an absolute path, it will be considered as relative

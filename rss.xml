@@ -1,2 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>Ian's Blog</title><link>http://insertinterestingnamehere.github.io/</link><description>My comments on math, numerical computing, and the tools used for computational science.</description><atom:link href="http://insertinterestingnamehere.github.io/rss.xml" type="application/rss+xml" rel="self"></atom:link><language>en</language><lastBuildDate>Fri, 01 May 2015 04:48:10 GMT</lastBuildDate><generator>http://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs></channel></rss>
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>Ian's Blog</title><link>http://insertinterestingnamehere.github.io/</link><description>My comments on math, numerical computing, and the tools used for computational science.</description><atom:link href="http://insertinterestingnamehere.github.io/rss.xml" type="application/rss+xml" rel="self"></atom:link><language>en</language><lastBuildDate>Fri, 22 May 2015 04:25:04 GMT</lastBuildDate><generator>http://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>First Impressions And Overcoming Compilation Errors</title><link>http://insertinterestingnamehere.github.io/posts/first-impressions-and-overcoming-compilation-errors.html</link><dc:creator>Ian Henriksen</dc:creator><description>&lt;div&gt;&lt;p&gt;Most of the past month was spent in a mad dash to finish my master's thesis.
+Who knew that writing 100 pages of original research in math could take so long?
+Either way, I'm finished and quite pleased with the result.
+My thesis is written and I have been able to, mostly, move on to other endeavors, like starting the work on my GSOC project, the Cython API for DyND (see the &lt;a href="https://www.google-melange.com/gsoc/project/details/google/gsoc2015/iandh/5707702298738688"&gt;brief description&lt;/a&gt; and &lt;a href="https://github.com/numfocus/gsoc/blob/master/2015/proposals/ian-henriksen.md"&gt;full proposal&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;I've been able to start familiarizing myself with the package a little more.
+My background is primarily in using NumPy and Cython, but it has been really nice to be able to use a NumPy-like data structure in C++ without having to use the Python C API to do everything.
+Stay tuned for a few nice snippets of code over the next few days.&lt;/p&gt;
+&lt;p&gt;Overall, I've been impressed by the amount of functionality that is already present.
+A few things like allowing the use of an ellipsis in indexing or providing routines for basic linear algebra operations have yet to be implemented, but, for the most part, the library is easy to use and provides a great deal of useful functionality at both the C++ and Python levels.&lt;/p&gt;
+&lt;p&gt;Before beginning detailed work on my project, I was first faced with the task of getting everything working on my main development machine.
+For a variety of reasons, it uses windows and needs to stay that way.
+Undaunted, I ventured forth, and attempted to build libdynd and its corresponding Python bindings from source with my compiler of choice, MinGW-w64.&lt;/p&gt;
+&lt;p&gt;MinGW-w64 is a relatively new version of MinGW that targets 64 bit windows.
+It is not as commonly used as MSVC, or gcc, so it is normal to have to fix a few compile errors when compiling large amounts of C/C++ code.
+Python's support for MinGW is shaky as well, but usually things come together nicely with a little effort.&lt;/p&gt;
+&lt;p&gt;After several long and ugly battles with a variety of compiler errors, I was able to get it all working, though there are still some test failures that still need to be revisited.
+The DyND source proved to be fairly easy to work with.
+The most difficult errors I came up against came from conflicts between the environment provided by the compiler and some of the type definitions in the Python headers.
+I'll document some of the useful information I picked up here.&lt;/p&gt;
+&lt;p&gt;For those that aren't familiar with it, the C preprocessor is an essential part of writing platform independent code.
+Among other things, it lets you write specialized sections of code for pieces that are specific to a given operating system, compiler, or architecture.
+For example, to write a section of code that applies only to Windows, you would write something like&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="c1"&gt;// If the environment variable indicating that you're compiling on Windows is defined&lt;/span&gt;
+&lt;span class="cp"&gt;#ifdef _WIN32&lt;/span&gt;
+  &lt;span class="c1"&gt;// Platform-specific code goes here.&lt;/span&gt;
+&lt;span class="cp"&gt;#endif&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;Similarly, if you want to differentiate between compilers,&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="cp"&gt;#ifdef _MSC_VER&lt;/span&gt;
+  &lt;span class="c1"&gt;// Code for MSVC compiler here.&lt;/span&gt;
+&lt;span class="cp"&gt;#elseif __GNUCC__&lt;/span&gt;
+  &lt;span class="c1"&gt;// Code for gcc/g++ here.&lt;/span&gt;
+  &lt;span class="c1"&gt;// Compilers that implement a GCC-like environment&lt;/span&gt;
+  &lt;span class="c1"&gt;// (e.g. ICC on Linux, or Clang on any platform)&lt;/span&gt;
+  &lt;span class="c1"&gt;// will also use this case.&lt;/span&gt;
+&lt;span class="cp"&gt;#else&lt;/span&gt;
+  &lt;span class="c1"&gt;// Code for all other compilers.&lt;/span&gt;
+&lt;span class="cp"&gt;#endif&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;Most of the work I did to get everything running involved modifying blocks that look like this to get the right combination.
+Frequently, code is defined to do one thing on windows (with the assumption that only MSVC will be used) and another on Linux, even though, for MinGW, many of the Linux configurations are needed for the compiler.
+In the past, I've found myself continually searching for what the right ways to detect a given compiler, operating system, or architecture, but it turns out there is a fairly complete &lt;a href="http://sourceforge.net/p/predef/wiki/Home/"&gt;list&lt;/a&gt; where the variables indicating most common compilers and operating systems are shown.&lt;/p&gt;
+&lt;p&gt;The build system CMake also provides ways of detecting things like that.
+A few useful examples:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="nb"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;WIN32&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="c"&gt;# You're compiling for Windows&lt;/span&gt;
+&lt;span class="nb"&gt;endif&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="nb"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"${CMAKE_SIZEOF_VOID_P}"&lt;/span&gt; &lt;span class="s"&gt;EQUAL&lt;/span&gt; &lt;span class="s2"&gt;"8"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="c"&gt;# You're compiling for a 64-bit machine.&lt;/span&gt;
+&lt;span class="nb"&gt;endif&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="nb"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"${CMAKE_CXX_COMPILER_ID}"&lt;/span&gt; &lt;span class="s"&gt;STREQUAL&lt;/span&gt; &lt;span class="s2"&gt;"GNU"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="c"&gt;# You're compiling for gcc.&lt;/span&gt;
+&lt;span class="nb"&gt;endif&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="nb"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"${CMAKE_CXX_COMPILER_ID}"&lt;/span&gt; &lt;span class="s"&gt;STREQUAL&lt;/span&gt; &lt;span class="s2"&gt;"MSVC"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="c"&gt;# You're compiling for MSVC.&lt;/span&gt;
+&lt;span class="nb"&gt;endif&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;Now, on to some of the tricker bugs.
+Hopefully including them here can help others resolve similar errors later on.&lt;/p&gt;
+&lt;p&gt;It is a less commonly known fact that the order of compiler flags matters if you are linking against different libraries.
+(An aside, for those that are new to the command line flags for gcc, there is a nice introduction &lt;a href="http://www.rapidtables.com/code/linux/gcc.htm"&gt;here&lt;/a&gt;)
+As it turns out, the order of the flags for gcc also matters in some less than intuitive cases.
+After compiling libdynd, in order to compile a basic working example I had to do &lt;code&gt;g++ -std=c++11 -fPIC declare_array.cpp -ldynd&lt;/code&gt; rather than &lt;code&gt;g++ -std=c++11 -ldynd -fPIC declare_array.cpp&lt;/code&gt;.
+Running the latter would give a series of linker errors like&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;undefined reference to 'dynd::detail::memory_block_free(dynd::memory_block_data*)'
+&lt;/pre&gt;
+
+
+&lt;p&gt;&lt;code&gt;clang++&lt;/code&gt; accepted both orderings of the flags without complaint.&lt;/p&gt;
+&lt;p&gt;I also ran into &lt;a href="http://bugs.python.org/issue11566"&gt;this bug in Python&lt;/a&gt; where there is an unfortunate name collision between a preprocessor macro defined in Python and a function in the c++11 standard library.
+The name collision results in the unusual error&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;error: '::hypot' has not been declared
+&lt;/pre&gt;
+
+
+&lt;p&gt;coming from the c++11 standard library headers.
+It appears that a &lt;a href="http://stackoverflow.com/a/12124708/1935144"&gt;generally known solution&lt;/a&gt; is to include the standard library math header before &lt;code&gt;Python.h&lt;/code&gt;.
+This wasn't a particularly favorable resolution to the issue since the Python headers are supposed to come first, so I opted to define the symbol &lt;code&gt;_hypot&lt;/code&gt; back again to be &lt;code&gt;hypot&lt;/code&gt; via a command line argument, i.e. adding the flag &lt;code&gt;-D_hypot=hypot&lt;/code&gt;.
+It worked like a charm.&lt;/p&gt;
+&lt;p&gt;The last batch of errors came from my forgetting to define the macro &lt;code&gt;MS_WIN64&lt;/code&gt; on the command line when working with the Python headers.
+That macro is used internally to indicate that a Python extension module is being compiled for a 64 bit Python installation on Windows.
+In this case, forgetting to include that flag resulted in the error&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;undefined reference to '__imp_Py_InitModule4'
+&lt;/pre&gt;
+
+
+&lt;p&gt;at link time.&lt;/p&gt;
+&lt;p&gt;In trying to fix the various errors from not defining &lt;code&gt;MS_WIN64&lt;/code&gt;, I also came across errors where &lt;code&gt;np_intp&lt;/code&gt; (a typedef of &lt;code&gt;Py_intptr_t&lt;/code&gt;) was not the correct size, resulting in the error&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="n"&gt;error&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;cannot&lt;/span&gt; &lt;span class="n"&gt;convert&lt;/span&gt; &lt;span class="s1"&gt;'long long int*'&lt;/span&gt; &lt;span class="n"&gt;to&lt;/span&gt; &lt;span class="s1"&gt;'npy_intp* {aka int*}'&lt;/span&gt; &lt;span class="k"&gt;in&lt;/span&gt; &lt;span class="n"&gt;argument&lt;/span&gt; &lt;span class="n"&gt;passing&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;The fundamental problem is that the logic in the Python headers fails to detect the proper size of a pointer without some sort of extra compile switch.
+Passing the command-line argument &lt;code&gt;-DMS_WIN64&lt;/code&gt; to the compiler when compiling Python extensions was sufficient to address the issue.&lt;/p&gt;
+&lt;p&gt;With most of the compilation-related issues behind me, I am now continuing my work in putting together several simple examples of how DyND can be used to perform NumPy-like operations at the C++ level.
+I'll be posting a few of them soon.&lt;/p&gt;&lt;/div&gt;</description><guid>http://insertinterestingnamehere.github.io/posts/first-impressions-and-overcoming-compilation-errors.html</guid><pubDate>Fri, 22 May 2015 04:23:11 GMT</pubDate></item></channel></rss>

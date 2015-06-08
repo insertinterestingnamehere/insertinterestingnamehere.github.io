@@ -18,7 +18,7 @@ I'll post more details once I've finished the main structural changes to the Pyt
 For now, I'd like to show a few basic examples of how to use DyND.
 The examples here showcase some of the similarities with NumPy as well as the simplicity of the notation.
 I haven't done any sort of performance comparison.
-The implimentations I've put together here using DyND work using array slicing and array arithmetic, so the cost of dispatching for types is still present in each array arithmetic operation.
+The implementations I've put together here using DyND work using array slicing and array arithmetic, so the cost of dispatching for types is still present in each array arithmetic operation.
 More efficient implementations could be created by coding a version of an algorithm that operates directly on the buffers of the arrays given.
 More efficient and general implementations could be constructed using DyND's arrfuncs, which are similar in purpose to NumPy's gufuncs, but I'm still figuring out how they work, so I'll have to include examples of how to do that later on.
 
@@ -40,7 +40,7 @@ The exact compiler calls replacing "(algorithm)" with the name of each particula
 clang++ -fPIC -O3 -I"c:/Program Files (x86)/libdynd/include" -std=c++11 (algorithm).cpp -L"c:/Program Files (x86)/libdynd/lib/static" -ldynd -o (algorithm).exe
 gfortran -fPIC -O3 (algorithm).f90 -o (algorithm)_f.exe
 ```
-The corresponding compiler calls on BSD, Linux, or other Unix-based operating systems are similar with the `-I` and `-L` directories being modified (or ommitted) according to the location of the DyND headers and library.
+The corresponding compiler calls on BSD, Linux, or other Unix-based operating systems are similar with the `-I` and `-L` directories being modified (or omitted) according to the location of the DyND headers and library.
 The same set of flags should work with recent versions of clang++ and g++.
 
 ## Horner's Algorithm

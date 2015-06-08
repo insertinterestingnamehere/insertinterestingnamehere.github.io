@@ -6,7 +6,7 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <url>
   <loc>http://insertinterestingnamehere.github.io/2015/index.html</loc>
-  <lastmod>2015-05-21</lastmod>
+  <lastmod>2015-06-08</lastmod>
  </url>
  <url>
   <loc>http://insertinterestingnamehere.github.io/archive.html</loc>
@@ -22,14 +22,18 @@
  </url>
  <url>
   <loc>http://insertinterestingnamehere.github.io/index.html</loc>
-  <lastmod>2015-05-21</lastmod>
+  <lastmod>2015-06-08</lastmod>
  </url>
  <url>
   <loc>http://insertinterestingnamehere.github.io/listings/index.html</loc>
   <lastmod>2015-04-30</lastmod>
  </url>
  <url>
+  <loc>http://insertinterestingnamehere.github.io/posts/basic-examples.html</loc>
+  <lastmod>2015-06-08</lastmod>
+ </url>
+ <url>
   <loc>http://insertinterestingnamehere.github.io/posts/first-impressions-and-overcoming-compilation-errors.html</loc>
-  <lastmod>2015-05-21</lastmod>
+  <lastmod>2015-06-08</lastmod>
  </url>
 </urlset>

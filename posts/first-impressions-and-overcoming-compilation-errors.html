@@ -25,6 +25,7 @@
     
 
     <meta name="author" content="Ian Henriksen">
+        <link rel="next" href="basic-examples.html" title="Basic Examples" type="text/html">
     
     <meta property="og:site_name" content="Ian's Blog">
     <meta property="og:title" content="First Impressions And Overcoming Compilation Errors">
@@ -231,6 +232,19 @@ In this case, forgetting to include that flag resulted in the error</p>
 Passing the command-line argument <code>-DMS_WIN64</code> to the compiler when compiling Python extensions was sufficient to address the issue.</p>
 <p>With most of the compilation-related issues behind me, I am now continuing my work in putting together several simple examples of how DyND can be used to perform NumPy-like operations at the C++ level.
 I'll be posting a few of them soon.</p>
+<h4>Update (6/8/2015)</h4>
+<p>In fixing a few more compilation errors, I found another <a href="http://nadeausoftware.com/articles/2012/01/c_c_tip_how_use_compiler_predefined_macros_detect_operating_system">useful table</a> of C preprocessor macros that can be used to identify a given operating system.
+Among other things, it mentions that any BSD operating system can be detected using something like</p>
+<pre class="code literal-block"><span class="cp">#ifdef __unix__</span>
+<span class="cp">#include &lt;sys/param.h&gt;</span>
+<span class="cp">#ifdef BSD</span>
+<span class="c1">// BSD stuff</span>
+<span class="cp">#endif</span>
+<span class="cp">#endif</span>
+</pre>
+
+
+<p>The <a href="https://gcc.gnu.org/onlinedocs/cpp/Standard-Predefined-Macros.html#Standard-Predefined-Macros">table in the GCC manual</a> also lists which preprocessor macros are required for a compiler implementing the relevant language standards.</p>
 </div>
     </div>
     <aside class="postpromonav">
@@ -238,6 +252,11 @@ I'll be posting a few of them soon.</p>
     
 
     
+        <ul class="pager">
+            <li class="next">
+                <a href="basic-examples.html" rel="next" title="Basic Examples">Next post</a>
+            </li>
+        </ul>
 
     </nav>
     </aside>

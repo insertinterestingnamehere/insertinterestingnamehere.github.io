@@ -119,3 +119,16 @@ Passing the command-line argument `-DMS_WIN64` to the compiler when compiling Py
 
 With most of the compilation-related issues behind me, I am now continuing my work in putting together several simple examples of how DyND can be used to perform NumPy-like operations at the C++ level.
 I'll be posting a few of them soon.
+
+### Update (6/8/2015)
+In fixing a few more compilation errors, I found another [useful table](http://nadeausoftware.com/articles/2012/01/c_c_tip_how_use_compiler_predefined_macros_detect_operating_system) of C preprocessor macros that can be used to identify a given operating system.
+Among other things, it mentions that any BSD operating system can be detected using something like
+```C++
+#ifdef __unix__
+#include <sys/param.h>
+#ifdef BSD
+// BSD stuff
+#endif
+#endif
+```
+The [table in the GCC manual](https://gcc.gnu.org/onlinedocs/cpp/Standard-Predefined-Macros.html#Standard-Predefined-Macros) also lists which preprocessor macros are required for a compiler implementing the relevant language standards.

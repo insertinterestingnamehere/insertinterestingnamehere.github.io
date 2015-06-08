@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>Ian's Blog</title><link>http://insertinterestingnamehere.github.io/</link><description>My comments on math, numerical computing, and the tools used for computational science.</description><atom:link href="http://insertinterestingnamehere.github.io/rss.xml" type="application/rss+xml" rel="self"></atom:link><language>en</language><lastBuildDate>Mon, 08 Jun 2015 19:09:13 GMT</lastBuildDate><generator>http://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Basic Examples</title><link>http://insertinterestingnamehere.github.io/posts/basic-examples.html</link><dc:creator>Ian Henriksen</dc:creator><description>&lt;div&gt;&lt;p&gt;The past two weeks have been an adventure.
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>Ian's Blog</title><link>http://insertinterestingnamehere.github.io/</link><description>My comments on math, numerical computing, and the tools used for computational science.</description><atom:link href="http://insertinterestingnamehere.github.io/rss.xml" type="application/rss+xml" rel="self"></atom:link><language>en</language><lastBuildDate>Mon, 08 Jun 2015 19:15:16 GMT</lastBuildDate><generator>http://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Basic Examples</title><link>http://insertinterestingnamehere.github.io/posts/basic-examples.html</link><dc:creator>Ian Henriksen</dc:creator><description>&lt;div&gt;&lt;p&gt;The past two weeks have been an adventure.
 I've spent a great deal of time working to find a reasonable way to refactor the DyND Python bindings in a way that works well for exporting all the existing Python/C++ compatibility functions at both the Cython and C++ level.
 After some discussion with my mentors, Mark and Irwin, I was able to get to what seems to be a workable model.
 I'm in the process of doing all the needed refactoring to put those changes into place.
@@ -7,7 +7,7 @@ I'll post more details once I've finished the main structural changes to the Pyt
 &lt;p&gt;For now, I'd like to show a few basic examples of how to use DyND.
 The examples here showcase some of the similarities with NumPy as well as the simplicity of the notation.
 I haven't done any sort of performance comparison.
-The implimentations I've put together here using DyND work using array slicing and array arithmetic, so the cost of dispatching for types is still present in each array arithmetic operation.
+The implementations I've put together here using DyND work using array slicing and array arithmetic, so the cost of dispatching for types is still present in each array arithmetic operation.
 More efficient implementations could be created by coding a version of an algorithm that operates directly on the buffers of the arrays given.
 More efficient and general implementations could be constructed using DyND's arrfuncs, which are similar in purpose to NumPy's gufuncs, but I'm still figuring out how they work, so I'll have to include examples of how to do that later on.&lt;/p&gt;
 &lt;p&gt;For my examples here, I'll focus on three different algorithms for polynomial evaluation.
@@ -27,7 +27,7 @@ gfortran -fPIC -O3 &lt;span class="o"&gt;(&lt;/span&gt;algorithm&lt;span class="
 &lt;/pre&gt;
 
 
-&lt;p&gt;The corresponding compiler calls on BSD, Linux, or other Unix-based operating systems are similar with the &lt;code&gt;-I&lt;/code&gt; and &lt;code&gt;-L&lt;/code&gt; directories being modified (or ommitted) according to the location of the DyND headers and library.
+&lt;p&gt;The corresponding compiler calls on BSD, Linux, or other Unix-based operating systems are similar with the &lt;code&gt;-I&lt;/code&gt; and &lt;code&gt;-L&lt;/code&gt; directories being modified (or omitted) according to the location of the DyND headers and library.
 The same set of flags should work with recent versions of clang++ and g++.&lt;/p&gt;
 &lt;h3&gt;Horner's Algorithm&lt;/h3&gt;
 &lt;p&gt;Horner's algorithm is the standard algorithm for evaluating a power basis polynomial at a parameter value, given the coefficients for the polynomial.

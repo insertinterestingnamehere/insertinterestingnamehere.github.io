@@ -112,7 +112,7 @@ I'll post more details once I've finished the main structural changes to the Pyt
 <p>For now, I'd like to show a few basic examples of how to use DyND.
 The examples here showcase some of the similarities with NumPy as well as the simplicity of the notation.
 I haven't done any sort of performance comparison.
-The implimentations I've put together here using DyND work using array slicing and array arithmetic, so the cost of dispatching for types is still present in each array arithmetic operation.
+The implementations I've put together here using DyND work using array slicing and array arithmetic, so the cost of dispatching for types is still present in each array arithmetic operation.
 More efficient implementations could be created by coding a version of an algorithm that operates directly on the buffers of the arrays given.
 More efficient and general implementations could be constructed using DyND's arrfuncs, which are similar in purpose to NumPy's gufuncs, but I'm still figuring out how they work, so I'll have to include examples of how to do that later on.</p>
 <p>For my examples here, I'll focus on three different algorithms for polynomial evaluation.
@@ -132,7 +132,7 @@ gfortran -fPIC -O3 <span class="o">(</span>algorithm<span class="o">)</span>.f90
 </pre>
 
 
-<p>The corresponding compiler calls on BSD, Linux, or other Unix-based operating systems are similar with the <code>-I</code> and <code>-L</code> directories being modified (or ommitted) according to the location of the DyND headers and library.
+<p>The corresponding compiler calls on BSD, Linux, or other Unix-based operating systems are similar with the <code>-I</code> and <code>-L</code> directories being modified (or omitted) according to the location of the DyND headers and library.
 The same set of flags should work with recent versions of clang++ and g++.</p>
 <h3>Horner's Algorithm</h3>
 <p>Horner's algorithm is the standard algorithm for evaluating a power basis polynomial at a parameter value, given the coefficients for the polynomial.

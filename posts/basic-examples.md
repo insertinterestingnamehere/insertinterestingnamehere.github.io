@@ -34,8 +34,8 @@ Regarding the notation, I found it very easy to use DyND's `irange` object with 
 It is used to specify ranges of indices over which to slice an array.
 Since multiple arguments are not allowed for the indexing operator in C++, the call operator is used for array slicing.
 
-For compiling these examples on Windows, I used a recent development version of clang compiled with mingw-w64 and gfortran.
-The exact compiler calls replacing (algorithm) with the name of each particular algorithm were
+For compiling these examples on Windows, I used gfortran and a recent development version (3.7.0 dev) of clang compiled with mingw-w64.
+The exact compiler calls replacing "(algorithm)" with the name of each particular algorithm were
 ```shell
 clang++ -fPIC -O3 -I"c:/Program Files (x86)/libdynd/include" -std=c++11 (algorithm).cpp -L"c:/Program Files (x86)/libdynd/lib/static" -ldynd -o (algorithm).exe
 gfortran -fPIC -O3 (algorithm).f90 -o (algorithm)_f.exe
@@ -72,7 +72,7 @@ using namespace dynd;
 
 nd::array horner(nd::array a, double t){
     nd::array v = a(0);
-    size_t e = a.get_dim_size;
+    size_t e = a.get_dim_size();
     for(size_t i=1; i < e; i++){
         v = t * v + a(i);}
     return v;}
@@ -148,7 +148,6 @@ int main(){
 ```
 
 In the Fortran version of this algorithm, dynamic allocation within the function is needed.
-This snippet shows how that works.
 
 ```FORTRAN
 ! Fortran

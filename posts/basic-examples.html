@@ -150,8 +150,8 @@ The Fortran versions will apply only to 1-dimensional arrays and will only opera
 <p>Regarding the notation, I found it very easy to use DyND's <code>irange</code> object with its overloaded comparison operators very easy to use.
 It is used to specify ranges of indices over which to slice an array.
 Since multiple arguments are not allowed for the indexing operator in C++, the call operator is used for array slicing.</p>
-<p>For compiling these examples on Windows, I used a recent development version of clang compiled with mingw-w64 and gfortran.
-The exact compiler calls replacing (algorithm) with the name of each particular algorithm were</p>
+<p>For compiling these examples on Windows, I used gfortran and a recent development version (3.7.0 dev) of clang compiled with mingw-w64.
+The exact compiler calls replacing "(algorithm)" with the name of each particular algorithm were</p>
 <pre class="code literal-block">clang++ -fPIC -O3 -I<span class="s2">"c:/Program Files (x86)/libdynd/include"</span> -std<span class="o">=</span>c++11 <span class="o">(</span>algorithm<span class="o">)</span>.cpp -L<span class="s2">"c:/Program Files (x86)/libdynd/lib/static"</span> -ldynd -o <span class="o">(</span>algorithm<span class="o">)</span>.exe
 gfortran -fPIC -O3 <span class="o">(</span>algorithm<span class="o">)</span>.f90 -o <span class="o">(</span>algorithm<span class="o">)</span>_f.exe
 </pre>
@@ -186,7 +186,7 @@ Here the coefficients are assumed to be given in order from highest to lowest de
 
 <span class="n">nd</span><span class="o">::</span><span class="n">array</span> <span class="n">horner</span><span class="p">(</span><span class="n">nd</span><span class="o">::</span><span class="n">array</span> <span class="n">a</span><span class="p">,</span> <span class="kt">double</span> <span class="n">t</span><span class="p">){</span>
     <span class="n">nd</span><span class="o">::</span><span class="n">array</span> <span class="n">v</span> <span class="o">=</span> <span class="n">a</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
-    <span class="kt">size_t</span> <span class="n">e</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="n">get_dim_size</span><span class="p">;</span>
+    <span class="kt">size_t</span> <span class="n">e</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="n">get_dim_size</span><span class="p">();</span>
     <span class="k">for</span><span class="p">(</span><span class="kt">size_t</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">e</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
         <span class="n">v</span> <span class="o">=</span> <span class="n">t</span> <span class="o">*</span> <span class="n">v</span> <span class="o">+</span> <span class="n">a</span><span class="p">(</span><span class="n">i</span><span class="p">);}</span>
     <span class="k">return</span> <span class="n">v</span><span class="p">;}</span>
@@ -260,8 +260,7 @@ It is also often used to evaluate Bézier curves.</p>
 </pre>
 
 
-<p>In the Fortran version of this algorithm, dynamic allocation within the function is needed.
-This snippet shows how that works.</p>
+<p>In the Fortran version of this algorithm, dynamic allocation within the function is needed.</p>
 <pre class="code literal-block"><span class="c">! Fortran</span>
 <span class="k">module </span><span class="n">decasteljaumodule</span>
 <span class="k">implicit none</span>

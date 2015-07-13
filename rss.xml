@@ -1,5 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>Ian's Blog</title><link>http://insertinterestingnamehere.github.io/</link><description>My comments on math, numerical computing, and the tools used for computational science.</description><atom:link href="http://insertinterestingnamehere.github.io/rss.xml" type="application/rss+xml" rel="self"></atom:link><language>en</language><lastBuildDate>Wed, 24 Jun 2015 01:37:51 GMT</lastBuildDate><generator>http://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Structure Plans and More Examples</title><link>http://insertinterestingnamehere.github.io/posts/structure-plans-and-more-examples.html</link><dc:creator>Ian Henriksen</dc:creator><description>&lt;div&gt;&lt;p&gt;Despite a few setbacks, these past two weeks have been ones of progress.
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>Ian's Blog</title><link>http://insertinterestingnamehere.github.io/</link><description>My comments on math, numerical computing, and the tools used for computational science.</description><atom:link href="http://insertinterestingnamehere.github.io/rss.xml" type="application/rss+xml" rel="self"></atom:link><language>en</language><lastBuildDate>Mon, 13 Jul 2015 21:08:46 GMT</lastBuildDate><generator>http://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Fixing Cython Bugs</title><link>http://insertinterestingnamehere.github.io/posts/fixing-cython-bugs.html</link><dc:creator>Ian Henriksen</dc:creator><description>&lt;div&gt;&lt;p&gt;Last week I went to the SciPy conference.
+It was great.
+I got to meet many of the major contributors to open source, including one of my mentors, Mark Wiebe.
+I also got to give a &lt;a href="https://www.youtube.com/watch?v=R4yB-8tB0J0"&gt;talk&lt;/a&gt; about some of my previous work on SciPy and see &lt;a href="https://www.youtube.com/watch?v=Le1GdRFt3E8"&gt;my wife's talk&lt;/a&gt; about our new applied math curriculum here at BYU.
+There were a lot of great presenters at the conference this year and it was good to see how many people are interested in and working on the software in the scientific Python stack.
+Above all, there were free t-shirts. Lots of free t-shirts.&lt;/p&gt;
+&lt;p&gt;Other than that, the past few weeks I've spent a lot of time fixing and following up on a series of Cython bugs.
+A lot of my time has been spent reading large chunks of the Cython codebase to properly understand what is going on.
+My understanding of what is going on is still very incomplete, but I've managed to get enough of a hold on things to be able to start fixing bugs.
+As I currently understand it, the Cython parser goes through a file and constructs a series of nodes representing the abstract syntax tree.
+Once the abstract syntax tree is constructed, there is a type resolution pass on all the existing nodes where some of the more generic nodes can specialize themselves as instances of more specific nodes.
+That helps localize parts of the code that deal with entirely different cases for the different types.
+This type resolution phase is also where all the static types are checked for correctness.
+Once types have all been checked and the proper nodes for code generation are in place, another pass is made to generate the correct code for each operation.
+Compiler directives are taken into account and different preambles are included conditionally as well.
+Most of the code for performing the type analysis pass and the code generation pass on the abstract syntax tree is in the different methods of the classes defined in &lt;code&gt;Cython/Compiler/ExprNodes.py&lt;/code&gt; and &lt;code&gt;Cython/Compiler/Nodes.py&lt;/code&gt;.
+That's a very rough overview of what is going on, but it has been enough for me to fix a few things.&lt;/p&gt;
+&lt;p&gt;The biggest bug I've been working on has been the fact that, until now, exception declarations for operators overloaded at the C++ level have not been respected in the generated C++ code.
+This means that, when an operation like &lt;code&gt;a + b&lt;/code&gt; ought to throw a C++ error, catch the C++ error, then translate it into a Python error, the only thing that really happens is the whole program crashing due to an uncaught C++ error.
+Fixing this has been a little tricky since temporary variables must be allocated and used to store the result of each operation, and many of the overloadable operations are handled separately throughout the Cython code.
+In spite of the fact that this is a large and delicate bug to fix, I have managed to get everything working for arithmetic and unary operators.
+Indexing and function calls still need more work/testing.&lt;/p&gt;
+&lt;p&gt;I've also been discussing the best way to do multidimensional indexing with the Cython developers.
+In C++, multidimensional indexing of C++ objects can be written easily as "a(1, 2, 3)".
+That is all well and good, except that such an expression cannot be used properly as a left-value in assignment in Cython even though that is perfectly valid in C++.
+The primary reasoning as far as I can tell is that allowing that would be decidedly un-pythonic.
+My personal preference is very strongly toward allowing the C++ syntax when working with C++ objects, but we're still trying to settle on a reasonable solution.&lt;/p&gt;
+&lt;p&gt;I've also resurrected an existing patch to allow using an overloaded call operator for stack-allocated objects and put in some initial code toward allowing users to declare and use an overloaded &lt;code&gt;operator=&lt;/code&gt; for a C++ class.
+There will be more patches coming soon on that.&lt;/p&gt;
+&lt;p&gt;Once I've fixed a few more of these Cython bugs, I expect to be able to continue my work in refactoring DyND's Python bindings to make the transition between Python, Cython/DyND, and C++/DyND much smoother.&lt;/p&gt;&lt;/div&gt;</description><guid>http://insertinterestingnamehere.github.io/posts/fixing-cython-bugs.html</guid><pubDate>Mon, 13 Jul 2015 19:26:32 GMT</pubDate></item><item><title>Structure Plans and More Examples</title><link>http://insertinterestingnamehere.github.io/posts/structure-plans-and-more-examples.html</link><dc:creator>Ian Henriksen</dc:creator><description>&lt;div&gt;&lt;p&gt;Despite a few setbacks, these past two weeks have been ones of progress.
 I was able to work with my mentors, Mark and Irwin, to come up with a plan for how to restructure the C++ namespaces in dynd-python.
 We opted to separate the namespaces for the Python interoperability functions and the namespaces for the primary DyND C++ functionality.
 This will make it so that Cython wrapper types for specific C++ types can have the same name without causing any sort of naming conflict.

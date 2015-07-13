@@ -25,7 +25,7 @@
 
     
 
-        <link rel="prefetch" href="posts/structure-plans-and-more-examples.html" type="text/html">
+        <link rel="prefetch" href="posts/fixing-cython-bugs.html" type="text/html">
 
 
 </head>
@@ -87,6 +87,56 @@
             
             
 <div class="postindex">
+    <article class="h-entry post-text">
+    <header>
+        <h1 class="p-name entry-title"><a href="posts/fixing-cython-bugs.html" class="u-url">Fixing Cython Bugs</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn">Ian Henriksen</span></p>
+            <p class="dateline"><a href="posts/fixing-cython-bugs.html" rel="bookmark"><time class="published dt-published" datetime="2015-07-13T13:26:32-06:00" title="2015-07-13 13:26">2015-07-13 13:26</time></a></p>
+                <p class="commentline">
+        
+</p>
+<div class="g-commentcount" data-href="/posts/fixing-cython-bugs.html"></div>
+<script src="https://apis.google.com/js/plusone.js"></script>
+
+
+        </div>
+    </header>
+    <div class="e-content entry-content">
+    <div>
+<p>Last week I went to the SciPy conference.
+It was great.
+I got to meet many of the major contributors to open source, including one of my mentors, Mark Wiebe.
+I also got to give a <a href="https://www.youtube.com/watch?v=R4yB-8tB0J0">talk</a> about some of my previous work on SciPy and see <a href="https://www.youtube.com/watch?v=Le1GdRFt3E8">my wife's talk</a> about our new applied math curriculum here at BYU.
+There were a lot of great presenters at the conference this year and it was good to see how many people are interested in and working on the software in the scientific Python stack.
+Above all, there were free t-shirts. Lots of free t-shirts.</p>
+<p>Other than that, the past few weeks I've spent a lot of time fixing and following up on a series of Cython bugs.
+A lot of my time has been spent reading large chunks of the Cython codebase to properly understand what is going on.
+My understanding of what is going on is still very incomplete, but I've managed to get enough of a hold on things to be able to start fixing bugs.
+As I currently understand it, the Cython parser goes through a file and constructs a series of nodes representing the abstract syntax tree.
+Once the abstract syntax tree is constructed, there is a type resolution pass on all the existing nodes where some of the more generic nodes can specialize themselves as instances of more specific nodes.
+That helps localize parts of the code that deal with entirely different cases for the different types.
+This type resolution phase is also where all the static types are checked for correctness.
+Once types have all been checked and the proper nodes for code generation are in place, another pass is made to generate the correct code for each operation.
+Compiler directives are taken into account and different preambles are included conditionally as well.
+Most of the code for performing the type analysis pass and the code generation pass on the abstract syntax tree is in the different methods of the classes defined in <code>Cython/Compiler/ExprNodes.py</code> and <code>Cython/Compiler/Nodes.py</code>.
+That's a very rough overview of what is going on, but it has been enough for me to fix a few things.</p>
+<p>The biggest bug I've been working on has been the fact that, until now, exception declarations for operators overloaded at the C++ level have not been respected in the generated C++ code.
+This means that, when an operation like <code>a + b</code> ought to throw a C++ error, catch the C++ error, then translate it into a Python error, the only thing that really happens is the whole program crashing due to an uncaught C++ error.
+Fixing this has been a little tricky since temporary variables must be allocated and used to store the result of each operation, and many of the overloadable operations are handled separately throughout the Cython code.
+In spite of the fact that this is a large and delicate bug to fix, I have managed to get everything working for arithmetic and unary operators.
+Indexing and function calls still need more work/testing.</p>
+<p>I've also been discussing the best way to do multidimensional indexing with the Cython developers.
+In C++, multidimensional indexing of C++ objects can be written easily as "a(1, 2, 3)".
+That is all well and good, except that such an expression cannot be used properly as a left-value in assignment in Cython even though that is perfectly valid in C++.
+The primary reasoning as far as I can tell is that allowing that would be decidedly un-pythonic.
+My personal preference is very strongly toward allowing the C++ syntax when working with C++ objects, but we're still trying to settle on a reasonable solution.</p>
+<p>I've also resurrected an existing patch to allow using an overloaded call operator for stack-allocated objects and put in some initial code toward allowing users to declare and use an overloaded <code>operator=</code> for a C++ class.
+There will be more patches coming soon on that.</p>
+<p>Once I've fixed a few more of these Cython bugs, I expect to be able to continue my work in refactoring DyND's Python bindings to make the transition between Python, Cython/DyND, and C++/DyND much smoother.</p>
+</div>
+    </div>
+    </article>
     <article class="h-entry post-text">
     <header>
         <h1 class="p-name entry-title"><a href="posts/structure-plans-and-more-examples.html" class="u-url">Structure Plans and More Examples</a></h1>

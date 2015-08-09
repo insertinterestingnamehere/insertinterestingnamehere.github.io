@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="en">
+    <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cython Collaboration | Ian's Blog</title>
+
+    
+            <link href="../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+
+    
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="../rss.xml">
+
+      <link rel="canonical" href="http://insertinterestingnamehere.github.io/posts/cython-collaboration.html">
+
+
+
+
+    
+        <!--[if lt IE 9]><script src="../assets/js/html5.js"></script><![endif]-->
+
+    
+
+
+    
+
+    <meta name="author" content="Ian Henriksen">
+        <link rel="prev" href="fixing-cython-bugs.html" title="Fixing Cython Bugs" type="text/html">
+    
+    <meta property="og:site_name" content="Ian's Blog">
+    <meta property="og:title" content="Cython Collaboration">
+    <meta property="og:url" content="http://insertinterestingnamehere.github.io/posts/cython-collaboration.html">
+    <meta property="og:description" content="I've spent the majority of these last few weeks working on adding new features to Cython.
+I just recently finished my work there, though the pull request involving exception handling for overloaded op">
+    <meta property="og:type" content="article">
+    <meta property="article:published_time" content="2015-08-05T15:55:07-06:00">
+
+    
+
+    
+
+
+
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+<!-- This keeps the margins nice -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://insertinterestingnamehere.github.io/">
+
+                <span id="blog-title">Ian's Blog</span>
+            </a>
+        </div>
+<!-- /.navbar-header -->
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                
+                <li>
+<a href="../archive.html">Archive</a>
+                </li>
+<li>
+<a href="../categories/index.html">Tags</a>
+                </li>
+<li>
+<a href="../rss.xml">RSS feed</a>
+
+                
+            </li>
+</ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                
+                
+                    
+    <li>
+    <a href="cython-collaboration.md" id="sourcelink">Source</a>
+    </li>
+
+                
+            </ul>
+        </div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav>
+
+<!-- End of Menubar -->
+
+<div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        <div class="row">
+            
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article">
+    
+    <header>
+        
+    <h1 class="p-name entry-title" itemprop="headline name"><a href="#" class="u-url">Cython Collaboration</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn">Ian Henriksen</span></p>
+            <p class="dateline"><a href="#" rel="bookmark"><time class="published dt-published" datetime="2015-08-05T15:55:07-06:00" itemprop="datePublished" title="2015-08-05 15:55">2015-08-05 15:55</time></a></p>
+                <p class="commentline">
+        
+</p>
+<div class="g-commentcount" data-href="/posts/cython-collaboration.html"></div>
+<script src="https://apis.google.com/js/plusone.js"></script>
+
+
+            
+        <p class="sourceline"><a href="cython-collaboration.md" id="sourcelink">Source</a></p>
+
+        </div>
+        
+
+    </header>
+
+    <div class="e-content entry-content" itemprop="articleBody text">
+    <div>
+<p>I've spent the majority of these last few weeks working on adding new features to Cython.
+I just recently finished my work there, though the pull request involving exception handling for overloaded operators is still waiting to be merged.
+Overloading the assignment operator should now work in all cases for C++ classes.
+Once the exception handling pull request is merged, translating C++ exceptions into Python exceptions should also work perfectly well.
+It has been a relief to finally get these bugs taken care of.
+There were a variety of features I wanted to add to Cython, but I've run out of time to work on them now, so they will have to wait till later.
+The Cython developers were very helpful in getting these bugs fixed.
+They've helped find and take care of a few corner cases that I missed in the pull requests that have been merged thus far.
+I wasn't able to finish all the features I wanted, but I was able to make a lot of good progress and start building a consensus on what some features should look like further down the road.
+I got a lot of good things done, but I'm ready to move back to working on DyND.</p>
+<p>One of the major features I added was allowing C++ classes to use an overloaded <code>operator=</code> within Cython.
+It is all working now and is on-schedule to be released as a part of 0.23.
+Handling cascaded assignment proved to be particularly tricky, since Cython mimics the Python semantics in the case of <code>a = b = c</code> rather than following the C++ behavior for C++ objects.
+With the help of the Cython developers, I was able to get it all working fine.</p>
+<p>Making Cython respect the exception handling declarations for overloaded C++ operators used within Cython proved to be a lengthy bit of work.
+In order to make it work properly, the type analysis code that determines when an exception handler should be used had to be connected to the C++ generation code that, if an exception handler is used, wraps the given arithmetic expression in a try-catch statement at the C++ level.
+This was challenging, not so much because it was hard to see what needed to be changed in the output, but because the needed changes consisted of identifying and making many small changes in many places.
+I'm pleased with the result now.
+Respecting different exception declarations for different operators requires that Cython generate a separate try-catch block for each operator used.
+Forming a try-except statement for each call to an overloaded operator also requires that the result of each subexpression be stored in a temporary variable.
+In theory, good removal of temporaries and good branch prediction should make it so that all of these extra temporary variables and try-catch statements have no additional effect on the time needed to evaluate a given expression, but that ideal may be difficult for C++ compilers to reach.
+Either way, that was the only way to properly conform to the existing API for overloaded operators that is already documented and used extensively in Cython.
+At some future point it would be nice to add a way to let users consolidate different try-except blocks, but that is well outside the scope of my current project.</p>
+<p>Thanks to the exception handling logic that I've added, things like the following raise an appropriate Python exception now rather than crash the Python interpreter:</p>
+<pre class="code literal-block"><span class="k">cdef</span> <span class="kr">extern</span> <span class="k">from</span> <span class="s">"myheader.hpp"</span> <span class="k">nogil</span><span class="p">:</span>
+    <span class="n">cppclass</span> <span class="n">thing</span><span class="p">:</span>
+        <span class="n">thing</span><span class="p">()</span>
+        <span class="n">thing</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">operator</span><span class="o">+</span><span class="p">(</span><span class="n">thing</span> <span class="o">&amp;</span><span class="n">other</span><span class="p">)</span> <span class="k">except</span> <span class="o">+</span>
+
+<span class="k">def</span> <span class="nf">myfunc</span><span class="p">():</span>
+    <span class="c"># Initialize some "thing"s to some values</span>
+    <span class="k">cdef</span> <span class="kt">thing</span> <span class="nf">a</span> <span class="o">=</span> <span class="o">...</span>
+    <span class="k">cdef</span> <span class="kt">thing</span> <span class="nf">b</span> <span class="o">=</span> <span class="o">...</span>
+    <span class="k">cdef</span> <span class="kt">thing</span> <span class="nf">c</span>
+    <span class="c"># Now do an operation that throws a C++ exception.</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</pre>
+
+
+<p>One of the key features I was hoping to work through with the Cython developers was finding an appropriate API for assignment to a multidimensional index.
+In C++ this is easily implemented as an assignment to an lvalue reference resulting from an overloaded or variadic function call.
+The Cython developers were opposed to allowing assignment to function calls, since an interface of that sort is fairly un-pythonic.
+That's a sensible opinion, but it leaves the problem of assigning to a multidimensional index unsolved.
+The only workable proposal that came from the discussion was one that would allow inline definitions of methods like <code>__getitem__</code> and <code>__setitem__</code> in the Cython extern declaration of the C++ class.
+Though that would provide a Python-like interface for users, I didn't opt to implement it that way for a variety of reasons.
+First, when working with a C++ library with Python bindings written in Cython, it forces users to keep track of three interfaces (the C++ interface, the Cython interface built on top of the C++ interface, and the Python interface) instead of two (the C++ and Python interfaces).
+Second, it makes library writers write larger amounts of oddly placed boilerplate code that is more difficult to understand and maintain.
+Third, it causes possible naming conflicts when working with C++ classes that overload both <code>operator[]</code> and <code>operator()</code> (this is primarily a theoretical concern, but it is still troubling).
+In order to allow C++-like control over the number of indices used (without using <code>std::tuple</code> and requiring C++11), these special functions would have to support C++ style function signature overloading as well, which requires that they have entirely different signatures than their corresponding Python variants.
+The maintainability of such a feature is also a concern, since it would require a wide variety of changes to the Cython code base, all of which are unlikely to be used frequently in many other projects.
+In spite of all these concerns, this is still a workable proposal, but I have avoided implementing it thus far in the hope that something better would surface.
+Given how much time I have left to work on this GSOC project, this feature may have to be left for later.</p>
+<p>Another important feature I spent some time trying to add was support for non-type template parameters.
+I posted two different possible API's: one which specifies only the number of parameters and allows the C++ compiler to verify that all the parameters are the correct type, and another that requires that the types of the parameters be specified at the Cython level so that they can all be checked when Cython generates the C++ source file.
+After waiting several days and receiving no response, I started work on the former, primarily because it seemed like the simplest option available.
+Adding the additional type declarations to the template parameters would have required finding a way to apply the existing operator overloading logic to template parameters, and I was uncertain of whether or not that would be doable while still mirroring the C++ template semantics.
+After I had spent a pair of days implementing most of the more lenient syntax, one of the Cython developers chimed in to support the stricter type checking.
+The argument in favor of stricter type checking makes sense since it lets users avoid having to debug the generated C and C++ files, but it would have been nice to hear a second opinion before spending a few days implementing the other syntax.
+This is another feature that, given how much time I have left, I'll probably have to leave for later.</p>
+<p>While discussing non-type template parameters, we also discussed adding support for variadic templates.
+The consensus on the syntax was to allow variadic template arguments to be used by simply adding an ellipsis where the C++ expression <code>typenames ...</code> would go.
+I also proposed allowing something like <code>types ...</code>, and that syntax may be adopted in the end anyway.
+I didn't get the time to add that feature, but at least the design ideas are there for someone to use later on.
+Currently, due to some incomplete type checking, variadic templated functions are already usable in Cython, but this is really a bug and not a feature.
+For example:</p>
+<pre class="code literal-block"><span class="c1">// variadic_print.hpp</span>
+<span class="cp">#pragma once</span>
+<span class="cp">#include &lt;iostream&gt;</span>
+
+<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="n">cpp_print</span><span class="p">(</span><span class="n">T</span> <span class="n">value</span><span class="p">){</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">value</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="k">typename</span><span class="p">...</span> <span class="n">Args</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="n">cpp_print</span><span class="p">(</span><span class="n">T</span> <span class="n">value</span><span class="p">,</span> <span class="n">Args</span><span class="p">...</span> <span class="n">args</span><span class="p">){</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">value</span> <span class="o">&lt;&lt;</span> <span class="s">", "</span><span class="p">;</span>
+  <span class="n">cpp_print</span><span class="p">(</span><span class="n">args</span><span class="p">...);</span>
+<span class="p">}</span>
+</pre>
+
+
+<pre class="code literal-block"><span class="c"># cpp_print.pyx</span>
+<span class="c"># The extra compile arguments here assume gcc or clang is used.</span>
+<span class="c"># distutils: extra_compile_args = ['-std=c++11']</span>
+
+<span class="k">from</span> <span class="nn">libcpp.string</span> <span class="k">cimport</span> <span class="n">string</span>
+
+<span class="k">cdef</span> <span class="kr">extern</span> <span class="k">from</span> <span class="s">"variadic_print.hpp"</span> <span class="k">nogil</span><span class="p">:</span>
+    <span class="nb">void</span> <span class="n">cpp_print</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
+    <span class="n">cdef</span><span class="p">:</span>
+        <span class="nb">int</span> <span class="n">thing1</span> <span class="o">=</span> <span class="mf">1</span>
+        <span class="nb">double</span> <span class="n">thing2</span> <span class="o">=</span> <span class="mf">2</span>
+        <span class="nb">long</span> <span class="nb">long</span> <span class="n">thing3</span> <span class="o">=</span> <span class="mf">3</span>
+        <span class="nb">float</span> <span class="n">thing4</span> <span class="o">=</span> <span class="mf">4</span>
+        <span class="n">string</span> <span class="n">thing5</span> <span class="o">=</span> <span class="s">"5"</span>
+    <span class="n">cpp_print</span><span class="p">(</span><span class="n">thing1</span><span class="p">,</span> <span class="n">thing2</span><span class="p">,</span> <span class="n">thing3</span><span class="p">,</span> <span class="n">thing4</span><span class="p">,</span> <span class="n">thing5</span><span class="p">)</span>
+</pre>
+
+
+<p>This definitely isn't a feature though.
+It's just a cleverly exploited bug that hasn't been fixed yet and is certainly not usable in anything more than entertaining examples.</p>
+<p>It would also be nice to see things like overloading in-place operations and overloading <code>operator||</code> and <code>operator&amp;&amp;</code> in Cython at some point, but I haven't done that yet.</p>
+<p>All things considered, even though I wasn't able to accomplish all I had hoped in Cython, I was still able to do a lot of useful things.
+The existing design philosophy in Cython didn't prove to be completely amenable to exposing a Cython-level API for a relatively advanced C++ library.
+The existing features are designed primarily to allow users to write Python-like code that manipulates C and C++ objects.
+The features that are focused toward interfacing with external C++ libraries are effective for constructing and exposing Python wrappers for C++ objects, but can often prove to be very unwieldy for exposing Cython-level APIs for C++ libraries.
+It's certainly still possible, but it definitely stretches the limits of the tools at hand.</p>
+<p>Now, moving forward after my work on Cython, I've shifted toward contributing to libdynd and dynd-python again.
+I've worked with my mentors to isolate a mysterious segfault that we were seeing when using clang to build libdynd and dynd-python.
+I've also worked on several improvements to the build system.
+Everything should be building with MinGW again soon, but, for now, my linux environment is good enough to work on some new features too.
+I've also spent some time working on some minimal examples of using the Cython declarations in dynd-python outside the installed Python package.</p>
+<p>To help with testing libdynd and dynd-python, I've also overhauled the Travis-CI build to make use of the new container-based infrastructure.
+Thus far the builds are running noticeably faster.
+These changes should be a great help to all of us in the future as we continue to develop both packages.</p>
+<p>Over these last few weeks I expect to spend most of my time making it as easy as possible to use as much of libdynd as possible within Cython.
+The infrastructure is already in place for most of the core pieces that need to be taken care of, so I'm feeling optimistic.</p>
+</div>
+    </div>
+    <aside class="postpromonav">
+    <nav>
+    
+
+    
+        <ul class="pager">
+            <li class="previous">
+                <a href="fixing-cython-bugs.html" rel="prev" title="Fixing Cython Bugs">Previous post</a>
+            </li>
+        </ul>
+
+    </nav>
+    </aside>
+        <section class="comments">
+        <h2>Comments</h2>
+        
+        
+<script src="https://apis.google.com/js/plusone.js"></script>
+<div class="g-comments" data-href="http://insertinterestingnamehere.github.io/posts/cython-collaboration.html" data-first_party_property="BLOGGER" data-view_type="FILTERED_POSTMOD">
+</div>
+
+
+        </section>
+    
+
+</article>
+
+        
+
+
+
+        </div>
+        <!--End of body content-->
+
+        <footer>
+            Contents © 2015         <a href="mailto:insertinterestingnamehere@gmail.com">Ian Henriksen</a> - Powered by         <a href="http://getnikola.com" rel="nofollow">Nikola</a>         
+            
+        </footer>
+    </div>
+</div>
+
+
+            <script src="../assets/js/all-nocdn.js"></script>
+    
+
+    <script>$('a.image-reference:not(.islink)').colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script>
+    <!-- fancy dates -->
+    <script>
+    moment.locale("");
+    fancydates(0, "YYYY-MM-DD HH:mm");
+    </script>
+    <!-- end fancy dates -->
+    
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-63913896-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+</body>
+</html>

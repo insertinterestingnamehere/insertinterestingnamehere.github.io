@@ -25,7 +25,7 @@
 
     
 
-        <link rel="prefetch" href="posts/cython-collaboration.html" type="text/html">
+        <link rel="prefetch" href="posts/gsoc-concluding-thoughts.html" type="text/html">
 
 
 </head>
@@ -87,6 +87,83 @@
             
             
 <div class="postindex">
+    <article class="h-entry post-text">
+    <header>
+        <h1 class="p-name entry-title"><a href="posts/gsoc-concluding-thoughts.html" class="u-url">GSOC Concluding Thoughts</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn">Ian Henriksen</span></p>
+            <p class="dateline"><a href="posts/gsoc-concluding-thoughts.html" rel="bookmark"><time class="published dt-published" datetime="2015-08-22T22:30:52-06:00" title="2015-08-22 22:30">2015-08-22 22:30</time></a></p>
+                <p class="commentline">
+        
+</p>
+<div class="g-commentcount" data-href="/posts/gsoc-concluding-thoughts.html"></div>
+<script src="https://apis.google.com/js/plusone.js"></script>
+
+
+        </div>
+    </header>
+    <div class="e-content entry-content">
+    <div>
+<p>After many long weeks of hunting bugs and reorganizing code, my GSOC has come to an end.
+My project turned out significantly different than I had expected, but much of my work still proved to be very valuable.
+I originally envisioned being able to use many of DyND's features within Cython in a transparent way.
+Much of the work that I did was in fixing bugs and laying the groundwork for making things like that possible.
+There are still several bugs to fix and features to add in Cython before that's really possible, but I'm still pleased with the progress I made during my GSOC.
+My bugfixes served to simplify some of the difficult problems that arise when wrapping and interfacing with nontrivial C++ code.
+My restructuring of the DyND Python bindings, as expected, made it much easier to transition between the C++-level DyND constructs and the Python classes used in its Python bindings.</p>
+<p>Here's a minimum working example that works with the latest versions of libdynd and dynd-python (as of this post).</p>
+<pre class="code literal-block"><span class="c1">// myfunc.cpp</span>
+<span class="cp">#include "dynd/func/callable.hpp"</span>
+<span class="cp">#include "dynd/func/apply.hpp"</span>
+<span class="cp">#include "dynd/func/elwise.hpp"</span>
+
+<span class="c1">// Write a function to turn into a DyND callable.</span>
+<span class="kt">double</span> <span class="nf">f</span><span class="p">(</span><span class="kt">double</span> <span class="n">a</span><span class="p">,</span> <span class="kt">double</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// Make the callable object.</span>
+<span class="n">dynd</span><span class="o">::</span><span class="n">nd</span><span class="o">::</span><span class="n">callable</span> <span class="n">f_broadcast</span> <span class="o">=</span> <span class="n">dynd</span><span class="o">::</span><span class="n">nd</span><span class="o">::</span><span class="n">functional</span><span class="o">::</span><span class="n">elwise</span><span class="p">(</span><span class="n">dynd</span><span class="o">::</span><span class="n">nd</span><span class="o">::</span><span class="n">functional</span><span class="o">::</span><span class="n">apply</span><span class="p">(</span><span class="o">&amp;</span><span class="n">f</span><span class="p">));</span>
+</pre>
+
+
+<pre class="code literal-block"><span class="c"># custom_callable.pyx</span>
+<span class="c"># distutils: extra_compile_args = -std=c++11</span>
+<span class="c"># distutils: libraries = dynd</span>
+
+<span class="k">from</span> <span class="nn">dynd.cpp.func.callable</span> <span class="k">cimport</span> <span class="nb">callable</span> <span class="k">as</span> <span class="n">cpp_callable</span>
+<span class="k">from</span> <span class="nn">dynd.nd.callable</span> <span class="k">cimport</span> <span class="nb">callable</span>
+<span class="k">from</span> <span class="nn">dynd</span> <span class="k">import</span> <span class="n">nd</span>
+
+<span class="c"># Declare the C++ defined callable object.</span>
+<span class="k">cdef</span> <span class="kr">extern</span> <span class="k">from</span> <span class="s">"myfunc.cpp"</span> <span class="k">nogil</span><span class="p">:</span>
+    <span class="n">cpp_callable</span> <span class="n">f_broadcast</span>
+
+<span class="c"># Construct a Python object wrapping the DyND callable.</span>
+<span class="k">cdef</span> <span class="kt">callable</span> <span class="nf">py_f</span> <span class="o">=</span> <span class="nb">callable</span><span class="p">()</span>
+<span class="n">py_f</span><span class="o">.</span><span class="n">v</span> <span class="o">=</span> <span class="n">f_broadcast</span>
+
+<span class="c"># A short demonstration.</span>
+<span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">])</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">3.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>
+    <span class="k">print</span> <span class="n">py_f</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</pre>
+
+
+<pre class="code literal-block"><span class="c"># setup.py</span>
+<span class="kn">from</span> <span class="nn">distutils.core</span> <span class="kn">import</span> <span class="n">setup</span>
+<span class="kn">from</span> <span class="nn">Cython.Build</span> <span class="kn">import</span> <span class="n">cythonize</span>
+<span class="n">setup</span><span class="p">(</span><span class="n">ext_modules</span><span class="o">=</span><span class="n">cythonize</span><span class="p">(</span><span class="s">"*.pyx"</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s">'c++'</span><span class="p">))</span>
+</pre>
+
+
+<p>As you can see, it is now very easy for external modules to transition smoothly between using DyND in C++ and providing Python-level functionality.
+There's still a lot to be done, but I find the fact that this is now such a simple process really remarkable.
+This example uses the strengths of both Cython and Dynd to provide useful and significant functionality, and I'm thrilled it is finally working.</p>
+</div>
+    </div>
+    </article>
     <article class="h-entry post-text">
     <header>
         <h1 class="p-name entry-title"><a href="posts/cython-collaboration.html" class="u-url">Cython Collaboration</a></h1>

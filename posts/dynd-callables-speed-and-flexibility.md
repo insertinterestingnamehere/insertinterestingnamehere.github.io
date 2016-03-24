@@ -9,6 +9,8 @@
 .. type: text
 -->
 
+(This is a post I wrote for the [Continuum Developer Blog](https://www.continuum.io/blog/developer-blog). You can see the original [here](https://www.continuum.io/blog/developer-blog/dynd-callables-speed-and-flexibility))
+
 ## Introduction
 
 We've been working hard to improve DyND in a wide variety of ways over the past few months.

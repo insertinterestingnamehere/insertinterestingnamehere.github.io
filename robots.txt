@@ -1,2 +1,4 @@
 Sitemap: http://insertinterestingnamehere.github.io/sitemapindex.xml
 
+User-Agent: *
+Host: insertinterestingnamehere.github.io

@@ -1,44 +1,30 @@
 <!DOCTYPE html>
 <html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="en">
-    <head>
-    <meta charset="utf-8">
-    <meta name="description" content="My comments on math, numerical computing, and the tools used for computational science.">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Ian's Blog | Ian's Blog</title>
-
-    
-            <link href="assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
-
-    
-            <link rel="alternate" type="application/rss+xml" title="RSS" href="rss.xml">
-
-      <link rel="canonical" href="http://insertinterestingnamehere.github.io/index.html">
-
-
-
-
-    
-        <!--[if lt IE 9]><script src="assets/js/html5.js"></script><![endif]-->
-
-    
-
-
-    
-
-        <link rel="prefetch" href="posts/gsoc-concluding-thoughts.html" type="text/html">
-
-
+<head>
+<meta charset="utf-8">
+<base href="http://insertinterestingnamehere.github.io/index.html">
+<meta name="description" content="My comments on math, numerical computing, and the tools used for computational science.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ian's Blog</title>
+<link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="assets/css/theme.css" rel="stylesheet" type="text/css">
+<meta content="#5670d4" name="theme-color">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="rss.xml">
+<link rel="canonical" href="http://insertinterestingnamehere.github.io/index.html">
+<!--[if lt IE 9]><script src="assets/js/html5.js"></script><![endif]--><link rel="prefetch" href="posts/dynd-callables-speed-and-flexibility.html" type="text/html">
 </head>
 <body>
 <a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
 
 <!-- Menubar -->
 
-<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-    <div class="container">
+<nav class="navbar navbar-inverse navbar-static-top"><div class="container">
 <!-- This keeps the margins nice -->
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
@@ -50,10 +36,9 @@
             </a>
         </div>
 <!-- /.navbar-header -->
-        <div class="collapse navbar-collapse navbar-ex1-collapse">
+        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
             <ul class="nav navbar-nav">
-                
-                <li>
+<li>
 <a href="archive.html">Archive</a>
                 </li>
 <li>
@@ -65,44 +50,302 @@
                 
             </li>
 </ul>
-
-            <ul class="nav navbar-nav navbar-right">
-                
-                
-                    
-                
-            </ul>
-        </div>
+<ul class="nav navbar-nav navbar-right"></ul>
+</div>
 <!-- /.navbar-collapse -->
     </div>
 <!-- /.container -->
-</nav>
-
-<!-- End of Menubar -->
-
-<div class="container" id="content" role="main">
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
     <div class="body-content">
         <!--Body content-->
         <div class="row">
             
             
+
+    
 <div class="postindex">
-    <article class="h-entry post-text">
-    <header>
-        <h1 class="p-name entry-title"><a href="posts/gsoc-concluding-thoughts.html" class="u-url">GSOC Concluding Thoughts</a></h1>
+    <article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/dynd-callables-speed-and-flexibility.html" class="u-url">DyND Callables: Speed and Flexibility</a></h1>
         <div class="metadata">
-            <p class="byline author vcard"><span class="byline-name fn">Ian Henriksen</span></p>
+            <p class="byline author vcard"><span class="byline-name fn">
+                Ian Henriksen
+            </span></p>
+            <p class="dateline"><a href="posts/dynd-callables-speed-and-flexibility.html" rel="bookmark"><time class="published dt-published" datetime="2016-03-15T13:22:33-06:00" title="2016-03-15 13:22">2016-03-15 13:22</time></a></p>
+                <p class="commentline">
+        
+</p>
+<div class="g-commentcount" data-href="/posts/dynd-callables-speed-and-flexibility.html"></div>
+<script src="https://apis.google.com/js/plusone.js"></script>
+</div>
+    </header><div class="e-content entry-content">
+    <div>
+<h3>Introduction</h3>
+<p>We've been working hard to improve DyND in a wide variety of ways over the past few months.
+While there is still a lot of churn in our codebase, now is a good time to show a few basic examples of the great functionality that's already there.
+The library is available on GitHub at <a href="https://github.com/libdynd/libdynd">https://github.com/libdynd/libdynd</a>.</p>
+<p>Today I want to focus on DyND's callable objects.
+Much of the code in this post is still experimental and subject to change.
+Keep that in mind when considering where to use it.</p>
+<p>All the examples here will be in C++14 unless otherwise noted.
+The build configuration should be set up to indicate that C++14, the DyND headers, and the DyND shared libraries should be used.
+Output from a line that prints something will be shown directly in the source files as comments.
+DyND also has a Python interface, so several examples in Python will also be included.</p>
+<h3>Getting Started</h3>
+<p>DyND's callables are, at the most basic level, functions that operate on arrays.
+At the very lowest level, a callable can access all of the data, type-defined metadata (e.g. stride information), and metadata for the arrays passed to it as arguments.
+This makes it possible to use callables for functionality like multiple dispatch, views based on stride manipulation, reductions, and broadcasting.
+The simplest case is using a callable to wrap a non-broadcasting non-dispatched function call so that it can be used on scalar arrays.</p>
+<p>Here's an example of how to do that:</p>
+<pre class="code literal-block"><span class="cp">#include &lt;iostream&gt;</span>
+<span class="c1">// Main header for DyND arrays:</span>
+<span class="cp">#include &lt;dynd/array.hpp&gt;</span>
+<span class="c1">// Main callable object header:</span>
+<span class="cp">#include &lt;dynd/callable.hpp&gt;</span>
+
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">dynd</span><span class="p">;</span>
+
+<span class="c1">// Write a function to turn into a DyND callable.</span>
+<span class="kt">double</span> <span class="nf">f</span><span class="p">(</span><span class="kt">double</span> <span class="n">a</span><span class="p">,</span> <span class="kt">double</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// Make the callable.</span>
+<span class="n">nd</span><span class="o">::</span><span class="n">callable</span> <span class="n">f_callable</span> <span class="o">=</span> <span class="n">nd</span><span class="o">::</span><span class="n">callable</span><span class="p">(</span><span class="n">f</span><span class="p">);</span>
+
+<span class="c1">// Main function to show how this works:</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// Initialize two arrays containing scalar values.</span>
+  <span class="n">nd</span><span class="o">::</span><span class="n">array</span> <span class="n">a</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">;</span>
+  <span class="n">nd</span><span class="o">::</span><span class="n">array</span> <span class="n">b</span> <span class="o">=</span> <span class="mf">2.</span><span class="p">;</span>
+
+  <span class="c1">// Print the dynamic type signature of the callable f_callable.</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">f_callable</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+  <span class="c1">// &lt;callable &lt;(float64, float64) -&gt; float64&gt; at 000001879424CF60&gt;</span>
+
+  <span class="c1">// Call the callable and print its output.</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">f_callable</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+  <span class="c1">//array(-1,</span>
+  <span class="c1">//      type="float64")</span>
+<span class="p">}</span>
+</pre>
+
+
+<p>The constructor for <code>dynd::nd::callable</code> does most of the work here.
+Using some interesting templating mechanisms internally, it is able to infer the argument types and return type for the function, select the corresponding DyND types, and form a DyND type that represents an analogous function call.
+The result is a callable object that wraps a pointer to the function <code>f</code> and knows all of the type information about the pointer it is wrapping.
+This callable can only be used with input arrays that have types that match the types for the original function's arguments.</p>
+<p>The extra type information contained in this callable is <code>"(float64, float64) -&gt; float64"</code>, as can be seen when the callable is printed.
+The syntax here comes from the <a href="http://datashape.readthedocs.org/en/latest/">datashape</a> data description system—the same type system used by <a href="http://blaze.readthedocs.org/en/latest/index.html">Blaze</a>, <a href="http://odo.readthedocs.org/en/latest/">Odo</a>, and several other libraries.</p>
+<p>One key thing to notice here is that the callable created now does its type checking dynamically rather than at compile time.
+DyND has its own system of types that is used to represent data and the functions that operate on it at runtime.
+While this does have some runtime cost, dynamic type checking removes the requirement that a C++ compiler verify the types for every operation.
+The dynamic nature of the DyND type system makes it possible to write code that operates in a generic way on both builtin and user-defined types in both static and dynamic languages.
+I'll leave discussion of the finer details of the DyND type system for another day though.</p>
+<h3>Broadcasting</h3>
+<p>DyND has other functions that make it possible to add additional semantics to a callable.
+These are higher-order functions (functions that operate on other functions), and they are used on existing callables rather than function pointers.
+The types for these functions are patterns that can be matched against a variety of different argument types.</p>
+<p>Things like array broadcasting, reductions, and multiple dispatch are all currently available.
+In the case of broadcasting and reductions, the new callable calls the wrapped function many times and handles the desired iteration structure over the arrays itself.
+In the case of multiple dispatch, different implementations of a function can be called based on the types of the inputs.
+DyND's multiple dispatch semantics are currently under revision, so I'll just show broadcasting and reductions here.</p>
+<p>DyND provides broadcasting through the function <code>dynd::nd::functional::elwise</code>.
+It follows broadcasting semantics similar to those followed by NumPy's generalized universal functions—though it is, in many ways, more general.
+The following example shows how to use <code>elwise</code> to create a callable that follows broadcasting semantics:</p>
+<pre class="code literal-block"><span class="c1">// Include &lt;cmath&gt; to get std::exp.</span>
+<span class="cp">#include &lt;cmath&gt;</span>
+<span class="cp">#include &lt;iostream&gt;</span>
+
+<span class="cp">#include &lt;dynd/array.hpp&gt;</span>
+<span class="cp">#include &lt;dynd/callable.hpp&gt;</span>
+<span class="c1">// Header containing dynd::nd::functional::elwise.</span>
+<span class="cp">#include &lt;dynd/func/elwise.hpp&gt;</span>
+
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">dynd</span><span class="p">;</span>
+
+<span class="kt">double</span> <span class="nf">myfunc_core</span><span class="p">(</span><span class="kt">double</span> <span class="n">a</span><span class="p">,</span> <span class="kt">double</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">nd</span><span class="o">::</span><span class="n">callable</span> <span class="n">myfunc</span> <span class="o">=</span> <span class="n">nd</span><span class="o">::</span><span class="n">functional</span><span class="o">::</span><span class="n">elwise</span><span class="p">(</span><span class="n">nd</span><span class="o">::</span><span class="n">callable</span><span class="p">(</span><span class="n">myfunc_core</span><span class="p">));</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// Initialize some arrays to demonstrate broadcasting semantics.</span>
+  <span class="c1">// Use brace initialization from C++11.</span>
+  <span class="n">nd</span><span class="o">::</span><span class="n">array</span> <span class="n">a</span><span class="p">{{</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">},</span> <span class="p">{</span><span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">}};</span>
+  <span class="n">nd</span><span class="o">::</span><span class="n">array</span> <span class="n">b</span><span class="p">{</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">};</span>
+  <span class="c1">// Create an additional array with a ragged second dimension as well.</span>
+  <span class="n">nd</span><span class="o">::</span><span class="n">array</span> <span class="n">c</span><span class="p">{{</span><span class="mf">9.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">},</span> <span class="p">{</span><span class="mf">11.</span><span class="p">}};</span>
+
+  <span class="c1">// Print the dynamic type signature of the callable.</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">myfunc</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+  <span class="c1">// &lt;callable &lt;(Dims... * float64, Dims... * float64) -&gt; Dims... * float64&gt;</span>
+  <span class="c1">//  at 000001C223FC5BE0&gt;</span>
+
+  <span class="c1">// Call the callable and print its output.</span>
+  <span class="c1">// Broadcast along the rows of a.</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">myfunc</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+  <span class="c1">// array([[-4, -8], [-6, -8]],</span>
+  <span class="c1">//       type="2 * 2 * float64")</span>
+
+  <span class="c1">// Broadcast the second row of c across the second row of a.</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">myfunc</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+  <span class="c1">// array([[ -8, -16], [-24, -28]],</span>
+  <span class="c1">//       type="2 * 2 * float64")</span>
+
+<span class="p">}</span>
+</pre>
+
+
+<p>A similar function can be constructed in Python using DyND's Python bindings and Python 3's function type annotations.
+If Numba is installed, it is used to get JIT-compiled code that has performance relatively close to the speed of the code generated by the C++ compiler.</p>
+<pre class="code literal-block"><span class="kn">from</span> <span class="nn">dynd</span> <span class="kn">import</span> <span class="n">nd</span><span class="p">,</span> <span class="n">ndt</span>
+
+<span class="nd">@nd.functional.elwise</span>
+<span class="k">def</span> <span class="nf">myfunc</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">ndt</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">ndt</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ndt</span><span class="o">.</span><span class="n">float64</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span>
+</pre>
+
+
+<h3>Reductions</h3>
+<p>Reductions are formed from functions that take two inputs and produce a single output.
+Examples of reductions include taking the sum, max, min, and product of the items in an array.
+Here we'll work with a reduction that takes the maximum of the absolute values of the items in an array.
+In DyND this can be implemented by using <code>nd::functional::reduction</code> on a callable that takes two floating point inputs and returns the maximum of their absolute values.
+Here's an example:</p>
+<pre class="code literal-block"><span class="c1">// Include &lt;algorithm&gt; to get std::max.</span>
+<span class="cp">#include &lt;algorithm&gt;</span>
+<span class="c1">// Include &lt;cmath&gt; to get std::abs.</span>
+<span class="cp">#include &lt;cmath&gt;</span>
+<span class="cp">#include &lt;iostream&gt;</span>
+
+<span class="cp">#include &lt;dynd/array.hpp&gt;</span>
+<span class="cp">#include &lt;dynd/callable.hpp&gt;</span>
+<span class="c1">// Header containing dynd::nd::functional::reduction.</span>
+<span class="cp">#include &lt;dynd/func/reduction.hpp&gt;</span>
+
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">dynd</span><span class="p">;</span>
+
+<span class="c1">// Wrap the function as a callable.</span>
+<span class="c1">// Then use dynd::nd::functional::reduction to make a reduction from it.</span>
+<span class="c1">// This time just wrap a C++ lambda function rather than a pointer</span>
+<span class="c1">// to a different function.</span>
+<span class="n">nd</span><span class="o">::</span><span class="n">callable</span> <span class="n">inf_norm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">::</span><span class="n">functional</span><span class="o">::</span><span class="n">reduction</span><span class="p">(</span><span class="n">nd</span><span class="o">::</span><span class="n">callable</span><span class="p">(</span>
+        <span class="p">[](</span><span class="kt">double</span> <span class="n">a</span><span class="p">,</span> <span class="kt">double</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">max</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">abs</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">abs</span><span class="p">(</span><span class="n">b</span><span class="p">));}));</span>
+
+<span class="c1">// Demonstrate the reduction working along both axes simultaneously.</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">nd</span><span class="o">::</span><span class="n">array</span> <span class="n">a</span><span class="p">{{</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">},</span> <span class="p">{</span><span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">}};</span>
+
+  <span class="c1">// Take the maximum absolute value over the whole array.</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">inf_norm</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+  <span class="c1">// array(4,</span>
+  <span class="c1">//       type="float64")</span>
+<span class="p">}</span>
+</pre>
+
+
+<p>Again, in Python, it is relatively easy to create a similar callable.</p>
+<pre class="code literal-block"><span class="kn">from</span> <span class="nn">dynd</span> <span class="kn">import</span> <span class="n">nd</span><span class="p">,</span> <span class="n">ndt</span>
+
+<span class="nd">@nd.functional.reduction</span>
+<span class="k">def</span> <span class="nf">inf_norm</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">ndt</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">ndt</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ndt</span><span class="o">.</span><span class="n">float64</span><span class="p">:</span>
+    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">b</span><span class="p">))</span>
+</pre>
+
+
+<p>The type for the reduction callable <code>inf_norm</code> is a bit longer.
+It is <code>(Dims... * float64, axes: ?Fixed * int32, identity: ?float64, keepdims: ?bool) -&gt; Dims... * float64</code>.
+This signature represents a callable that accepts a single input array and has several optional keyword arguments.
+In Python, passing keyword arguments to callables works the same as it would for any other function.
+Currently, in C++, initializer lists mapping strings to values are used since the names of the keyword arguments are not necessarily known at compile time.</p>
+<h3>Exporting Callables to Python</h3>
+<p>The fact that DyND callables are C++ objects with a single C++ type makes it easy to wrap them for use in Python.
+This is done using the wrappers for the callable class already built in to DyND's Python bindings.
+Using DyND in Cython merits a discussion of its own, so I'll only include a minimal example here.</p>
+<p>This Cython code in particular is still using experimental interfaces.
+The import structure and function names here are very likely to change.</p>
+<p>The first thing needed is a header that creates the desired callable.
+Since this will only be included once in a single Cython based module, additional guards to make sure the header is only applied once are not needed.</p>
+<pre class="code literal-block"><span class="c1">// inf_norm_reduction.hpp</span>
+<span class="cp">#include &lt;algorithm&gt;</span>
+<span class="cp">#include &lt;cmath&gt;</span>
+
+<span class="cp">#include &lt;dynd/array.hpp&gt;</span>
+<span class="cp">#include &lt;dynd/callable.hpp&gt;</span>
+<span class="cp">#include &lt;dynd/func/reduction.hpp&gt;</span>
+
+<span class="k">static</span> <span class="n">dynd</span><span class="o">::</span><span class="n">nd</span><span class="o">::</span><span class="n">callable</span> <span class="n">inf_norm</span> <span class="o">=</span>
+    <span class="n">dynd</span><span class="o">::</span><span class="n">nd</span><span class="o">::</span><span class="n">functional</span><span class="o">::</span><span class="n">reduction</span><span class="p">(</span><span class="n">dynd</span><span class="o">::</span><span class="n">nd</span><span class="o">::</span><span class="n">callable</span><span class="p">(</span>
+        <span class="p">[](</span><span class="kt">double</span> <span class="n">a</span><span class="p">,</span> <span class="kt">double</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">max</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">abs</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">abs</span><span class="p">(</span><span class="n">b</span><span class="p">));}));</span>
+</pre>
+
+
+<p>The callable can now be exposed to Python through Cython.
+Some work still needs to be done in DyND's Python bindings to simplify the system-specific configuration for linking extensions like this to the DyND libraries.
+For simplicity, I'll just show the commented Cython distutils directives that can be used to build this file on 64 bit Windows with a libdynd built and installed from source in the default location.
+Similar configurations can be put together for other systems.</p>
+<pre class="code literal-block"><span class="c"># py_inf_norm.pyx</span>
+<span class="c"># distutils: include_dirs = "c:/Program Files/libdynd/include"</span>
+<span class="c"># distutils: library_dirs = "c:/Program Files/libdynd/lib"</span>
+<span class="c"># distutils: libraries = ["libdynd", "libdyndt"]</span>
+
+<span class="k">from</span> <span class="nn">dynd</span> <span class="k">import</span> <span class="n">nd</span><span class="p">,</span> <span class="n">ndt</span>
+
+<span class="k">from</span> <span class="nn">dynd.cpp.callable</span> <span class="k">cimport</span> <span class="nb">callable</span> <span class="k">as</span> <span class="n">cpp_callable</span>
+<span class="k">from</span> <span class="nn">dynd.nd.callable</span> <span class="k">cimport</span> <span class="n">dynd_nd_callable_from_cpp</span>
+
+<span class="k">cdef</span> <span class="kr">extern</span> <span class="k">from</span> <span class="s">"inf_norm_reduction.hpp"</span> <span class="k">nogil</span><span class="p">:</span>
+    <span class="c"># Have Cython call this "cpp_inf_norm", but use "inf_norm" in</span>
+    <span class="c"># the generated C++ source.</span>
+    <span class="n">cpp_callable</span> <span class="n">inf_norm</span>
+
+<span class="n">py_inf_norm</span> <span class="o">=</span> <span class="n">dynd_nd_callable_from_cpp</span><span class="p">(</span><span class="n">inf_norm</span><span class="p">)</span>
+</pre>
+
+
+<p>To build the extension I used the following setup file and ran it with the command <code>python setup.py build_ext --inplace</code>.</p>
+<pre class="code literal-block"><span class="c"># setup.py</span>
+<span class="c"># This is a fairly standard setup script for a minimal Cython module.</span>
+<span class="kn">from</span> <span class="nn">distutils.core</span> <span class="kn">import</span> <span class="n">setup</span>
+<span class="kn">from</span> <span class="nn">Cython.Build</span> <span class="kn">import</span> <span class="n">cythonize</span>
+<span class="n">setup</span><span class="p">(</span><span class="n">ext_modules</span><span class="o">=</span><span class="n">cythonize</span><span class="p">(</span><span class="s">"py_inf_norm.pyx"</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s">'c++'</span><span class="p">))</span>
+</pre>
+
+
+<h3>A Short Benchmark</h3>
+<p><code>elwise</code> and <code>reduction</code> are not heavily optimized yet, but, using IPython's <code>timeit</code> magic, it's clear that DyND is already doing well:</p>
+<pre class="code literal-block"><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="kn">from</span> <span class="nn">py_inf_norm</span> <span class="kn">import</span> <span class="n">py_inf_norm</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="o">%</span><span class="n">timeit</span> <span class="n">py_inf_norm</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="mi">1</span> <span class="n">loop</span><span class="p">,</span> <span class="n">best</span> <span class="n">of</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">231</span> <span class="n">ms</span> <span class="n">per</span> <span class="n">loop</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="o">%</span><span class="n">timeit</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="nb">ord</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+<span class="mi">1</span> <span class="n">loop</span><span class="p">,</span> <span class="n">best</span> <span class="n">of</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">393</span> <span class="n">ms</span> <span class="n">per</span> <span class="n">loop</span>
+</pre>
+
+
+<p>These are just a few examples of the myriad of things you can do with DyND's callables.
+For more information take a look at our <a href="https://github.com/libdynd/libdynd">github repo</a> as well as <a href="posts/libdynd.org">libdynd.org</a>.
+We'll be adding a lot more functionality, documentation, and examples in the coming months.</p>
+</div>
+    </div>
+    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/gsoc-concluding-thoughts.html" class="u-url">GSOC Concluding Thoughts</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn">
+                Ian Henriksen
+            </span></p>
             <p class="dateline"><a href="posts/gsoc-concluding-thoughts.html" rel="bookmark"><time class="published dt-published" datetime="2015-08-22T22:30:52-06:00" title="2015-08-22 22:30">2015-08-22 22:30</time></a></p>
                 <p class="commentline">
         
 </p>
 <div class="g-commentcount" data-href="/posts/gsoc-concluding-thoughts.html"></div>
 <script src="https://apis.google.com/js/plusone.js"></script>
-
-
-        </div>
-    </header>
-    <div class="e-content entry-content">
+</div>
+    </header><div class="e-content entry-content">
     <div>
 <p>After many long weeks of hunting bugs and reorganizing code, my GSOC has come to an end.
 My project turned out significantly different than I had expected, but much of my work still proved to be very valuable.
@@ -163,23 +406,19 @@ There's still a lot to be done, but I find the fact that this is now such a simp
 This example uses the strengths of both Cython and Dynd to provide useful and significant functionality, and I'm thrilled it is finally working.</p>
 </div>
     </div>
-    </article>
-    <article class="h-entry post-text">
-    <header>
-        <h1 class="p-name entry-title"><a href="posts/cython-collaboration.html" class="u-url">Cython Collaboration</a></h1>
+    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/cython-collaboration.html" class="u-url">Cython Collaboration</a></h1>
         <div class="metadata">
-            <p class="byline author vcard"><span class="byline-name fn">Ian Henriksen</span></p>
+            <p class="byline author vcard"><span class="byline-name fn">
+                Ian Henriksen
+            </span></p>
             <p class="dateline"><a href="posts/cython-collaboration.html" rel="bookmark"><time class="published dt-published" datetime="2015-08-05T15:55:07-06:00" title="2015-08-05 15:55">2015-08-05 15:55</time></a></p>
                 <p class="commentline">
         
 </p>
 <div class="g-commentcount" data-href="/posts/cython-collaboration.html"></div>
 <script src="https://apis.google.com/js/plusone.js"></script>
-
-
-        </div>
-    </header>
-    <div class="e-content entry-content">
+</div>
+    </header><div class="e-content entry-content">
     <div>
 <p>I've spent the majority of these last few weeks working on adding new features to Cython.
 I just recently finished my work there, though the pull request involving exception handling for overloaded operators is still waiting to be merged.
@@ -271,12 +510,12 @@ For example:</p>
 <span class="k">from</span> <span class="nn">libcpp.string</span> <span class="k">cimport</span> <span class="n">string</span>
 
 <span class="k">cdef</span> <span class="kr">extern</span> <span class="k">from</span> <span class="s">"variadic_print.hpp"</span> <span class="k">nogil</span><span class="p">:</span>
-    <span class="nb">void</span> <span class="n">cpp_print</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+    <span class="n">void</span> <span class="n">cpp_print</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
     <span class="n">cdef</span><span class="p">:</span>
         <span class="nb">int</span> <span class="n">thing1</span> <span class="o">=</span> <span class="mf">1</span>
-        <span class="nb">double</span> <span class="n">thing2</span> <span class="o">=</span> <span class="mf">2</span>
+        <span class="n">double</span> <span class="n">thing2</span> <span class="o">=</span> <span class="mf">2</span>
         <span class="nb">long</span> <span class="nb">long</span> <span class="n">thing3</span> <span class="o">=</span> <span class="mf">3</span>
         <span class="nb">float</span> <span class="n">thing4</span> <span class="o">=</span> <span class="mf">4</span>
         <span class="n">string</span> <span class="n">thing5</span> <span class="o">=</span> <span class="s">"5"</span>
@@ -304,23 +543,19 @@ These changes should be a great help to all of us in the future as we continue t
 The infrastructure is already in place for most of the core pieces that need to be taken care of, so I'm feeling optimistic.</p>
 </div>
     </div>
-    </article>
-    <article class="h-entry post-text">
-    <header>
-        <h1 class="p-name entry-title"><a href="posts/fixing-cython-bugs.html" class="u-url">Fixing Cython Bugs</a></h1>
+    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/fixing-cython-bugs.html" class="u-url">Fixing Cython Bugs</a></h1>
         <div class="metadata">
-            <p class="byline author vcard"><span class="byline-name fn">Ian Henriksen</span></p>
+            <p class="byline author vcard"><span class="byline-name fn">
+                Ian Henriksen
+            </span></p>
             <p class="dateline"><a href="posts/fixing-cython-bugs.html" rel="bookmark"><time class="published dt-published" datetime="2015-07-13T13:26:32-06:00" title="2015-07-13 13:26">2015-07-13 13:26</time></a></p>
                 <p class="commentline">
         
 </p>
 <div class="g-commentcount" data-href="/posts/fixing-cython-bugs.html"></div>
 <script src="https://apis.google.com/js/plusone.js"></script>
-
-
-        </div>
-    </header>
-    <div class="e-content entry-content">
+</div>
+    </header><div class="e-content entry-content">
     <div>
 <p>Last week I went to the SciPy conference.
 It was great.
@@ -354,23 +589,19 @@ There will be more patches coming soon on that.</p>
 <p>Once I've fixed a few more of these Cython bugs, I expect to be able to continue my work in refactoring DyND's Python bindings to make the transition between Python, Cython/DyND, and C++/DyND much smoother.</p>
 </div>
     </div>
-    </article>
-    <article class="h-entry post-text">
-    <header>
-        <h1 class="p-name entry-title"><a href="posts/structure-plans-and-more-examples.html" class="u-url">Structure Plans and More Examples</a></h1>
+    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/structure-plans-and-more-examples.html" class="u-url">Structure Plans and More Examples</a></h1>
         <div class="metadata">
-            <p class="byline author vcard"><span class="byline-name fn">Ian Henriksen</span></p>
+            <p class="byline author vcard"><span class="byline-name fn">
+                Ian Henriksen
+            </span></p>
             <p class="dateline"><a href="posts/structure-plans-and-more-examples.html" rel="bookmark"><time class="published dt-published" datetime="2015-06-23T15:15:07-06:00" title="2015-06-23 15:15">2015-06-23 15:15</time></a></p>
                 <p class="commentline">
         
 </p>
 <div class="g-commentcount" data-href="/posts/structure-plans-and-more-examples.html"></div>
 <script src="https://apis.google.com/js/plusone.js"></script>
-
-
-        </div>
-    </header>
-    <div class="e-content entry-content">
+</div>
+    </header><div class="e-content entry-content">
     <div>
 <p>Despite a few setbacks, these past two weeks have been ones of progress.
 I was able to work with my mentors, Mark and Irwin, to come up with a plan for how to restructure the C++ namespaces in dynd-python.
@@ -466,23 +697,19 @@ Here's a simple program that shows some arrfuncs in action:</p>
 In another few weeks I expect to be able to do this sort of thing just as naturally in Cython.</p>
 </div>
     </div>
-    </article>
-    <article class="h-entry post-text">
-    <header>
-        <h1 class="p-name entry-title"><a href="posts/basic-examples.html" class="u-url">Basic Examples</a></h1>
+    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/basic-examples.html" class="u-url">Basic Examples</a></h1>
         <div class="metadata">
-            <p class="byline author vcard"><span class="byline-name fn">Ian Henriksen</span></p>
+            <p class="byline author vcard"><span class="byline-name fn">
+                Ian Henriksen
+            </span></p>
             <p class="dateline"><a href="posts/basic-examples.html" rel="bookmark"><time class="published dt-published" datetime="2015-06-08T10:26:00-06:00" title="2015-06-08 10:26">2015-06-08 10:26</time></a></p>
                 <p class="commentline">
         
 </p>
 <div class="g-commentcount" data-href="/posts/basic-examples.html"></div>
 <script src="https://apis.google.com/js/plusone.js"></script>
-
-
-        </div>
-    </header>
-    <div class="e-content entry-content">
+</div>
+    </header><div class="e-content entry-content">
     <div>
 <p>The past two weeks have been an adventure.
 I've spent a great deal of time working to find a reasonable way to refactor the DyND Python bindings in a way that works well for exporting all the existing Python/C++ compatibility functions at both the Cython and C++ level.
@@ -715,23 +942,19 @@ The code here is a simplified adaptation of the code </p>
 </pre>
 </div>
     </div>
-    </article>
-    <article class="h-entry post-text">
-    <header>
-        <h1 class="p-name entry-title"><a href="posts/first-impressions-and-overcoming-compilation-errors.html" class="u-url">First Impressions And Overcoming Compilation Errors</a></h1>
+    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/first-impressions-and-overcoming-compilation-errors.html" class="u-url">First Impressions And Overcoming Compilation Errors</a></h1>
         <div class="metadata">
-            <p class="byline author vcard"><span class="byline-name fn">Ian Henriksen</span></p>
+            <p class="byline author vcard"><span class="byline-name fn">
+                Ian Henriksen
+            </span></p>
             <p class="dateline"><a href="posts/first-impressions-and-overcoming-compilation-errors.html" rel="bookmark"><time class="published dt-published" datetime="2015-05-21T22:23:11-06:00" title="2015-05-21 22:23">2015-05-21 22:23</time></a></p>
                 <p class="commentline">
         
 </p>
 <div class="g-commentcount" data-href="/posts/first-impressions-and-overcoming-compilation-errors.html"></div>
 <script src="https://apis.google.com/js/plusone.js"></script>
-
-
-        </div>
-    </header>
-    <div class="e-content entry-content">
+</div>
+    </header><div class="e-content entry-content">
     <div>
 <p>Most of the past month was spent in a mad dash to finish my master's thesis.
 Who knew that writing 100 pages of original research in math could take so long?
@@ -864,26 +1087,18 @@ Among other things, it mentions that any BSD operating system can be detected us
         </div>
         <!--End of body content-->
 
-        <footer>
-            Contents © 2015         <a href="mailto:insertinterestingnamehere@gmail.com">Ian Henriksen</a> - Powered by         <a href="http://getnikola.com" rel="nofollow">Nikola</a>         
+        <footer id="footer">
+            Contents © 2016         <a href="mailto:insertinterestingnamehere@gmail.com">Ian Henriksen</a> - Powered by         <a href="http://getnikola.com" rel="nofollow">Nikola</a>         
             
         </footer>
-    </div>
+</div>
 </div>
 
 
-            <script src="assets/js/all-nocdn.js"></script>
-    
-
-    <script>$('a.image-reference:not(.islink)').colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script>
-    <!-- fancy dates -->
-    <script>
-    moment.locale("");
+            <script src="assets/js/jquery.min.js"></script><script src="assets/js/bootstrap.min.js"></script><script src="assets/js/moment-with-locales.min.js"></script><script src="assets/js/fancydates.js"></script><script src="assets/js/jquery.colorbox-min.js"></script><script>$('a.image-reference:not(.islink) img:not(.islink)').parent().colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script><!-- fancy dates --><script>
+    moment.locale("en");
     fancydates(0, "YYYY-MM-DD HH:mm");
-    </script>
-    <!-- end fancy dates -->
-    
-<script>
+    </script><!-- end fancy dates --><script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -893,6 +1108,5 @@ Among other things, it mentions that any BSD operating system can be detected us
   ga('send', 'pageview');
 
 </script>
-
 </body>
 </html>

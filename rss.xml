@@ -1,5 +1,257 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>Ian's Blog</title><link>http://insertinterestingnamehere.github.io/</link><description>My comments on math, numerical computing, and the tools used for computational science.</description><atom:link href="http://insertinterestingnamehere.github.io/rss.xml" type="application/rss+xml" rel="self"></atom:link><language>en</language><lastBuildDate>Sun, 23 Aug 2015 05:07:28 GMT</lastBuildDate><generator>http://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>GSOC Concluding Thoughts</title><link>http://insertinterestingnamehere.github.io/posts/gsoc-concluding-thoughts.html</link><dc:creator>Ian Henriksen</dc:creator><description>&lt;div&gt;&lt;p&gt;After many long weeks of hunting bugs and reorganizing code, my GSOC has come to an end.
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Ian's Blog</title><link>http://insertinterestingnamehere.github.io/</link><description>My comments on math, numerical computing, and the tools used for computational science.</description><atom:link href="http://insertinterestingnamehere.github.io/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><lastBuildDate>Thu, 24 Mar 2016 18:53:51 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>DyND Callables: Speed and Flexibility</title><link>http://insertinterestingnamehere.github.io/posts/dynd-callables-speed-and-flexibility.html</link><dc:creator>Ian Henriksen</dc:creator><description>&lt;div&gt;&lt;h3&gt;Introduction&lt;/h3&gt;
+&lt;p&gt;We've been working hard to improve DyND in a wide variety of ways over the past few months.
+While there is still a lot of churn in our codebase, now is a good time to show a few basic examples of the great functionality that's already there.
+The library is available on GitHub at &lt;a href="https://github.com/libdynd/libdynd"&gt;https://github.com/libdynd/libdynd&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Today I want to focus on DyND's callable objects.
+Much of the code in this post is still experimental and subject to change.
+Keep that in mind when considering where to use it.&lt;/p&gt;
+&lt;p&gt;All the examples here will be in C++14 unless otherwise noted.
+The build configuration should be set up to indicate that C++14, the DyND headers, and the DyND shared libraries should be used.
+Output from a line that prints something will be shown directly in the source files as comments.
+DyND also has a Python interface, so several examples in Python will also be included.&lt;/p&gt;
+&lt;h3&gt;Getting Started&lt;/h3&gt;
+&lt;p&gt;DyND's callables are, at the most basic level, functions that operate on arrays.
+At the very lowest level, a callable can access all of the data, type-defined metadata (e.g. stride information), and metadata for the arrays passed to it as arguments.
+This makes it possible to use callables for functionality like multiple dispatch, views based on stride manipulation, reductions, and broadcasting.
+The simplest case is using a callable to wrap a non-broadcasting non-dispatched function call so that it can be used on scalar arrays.&lt;/p&gt;
+&lt;p&gt;Here's an example of how to do that:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="cp"&gt;#include &amp;lt;iostream&amp;gt;&lt;/span&gt;
+&lt;span class="c1"&gt;// Main header for DyND arrays:&lt;/span&gt;
+&lt;span class="cp"&gt;#include &amp;lt;dynd/array.hpp&amp;gt;&lt;/span&gt;
+&lt;span class="c1"&gt;// Main callable object header:&lt;/span&gt;
+&lt;span class="cp"&gt;#include &amp;lt;dynd/callable.hpp&amp;gt;&lt;/span&gt;
+
+&lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="k"&gt;namespace&lt;/span&gt; &lt;span class="n"&gt;dynd&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="c1"&gt;// Write a function to turn into a DyND callable.&lt;/span&gt;
+&lt;span class="kt"&gt;double&lt;/span&gt; &lt;span class="nf"&gt;f&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;double&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;double&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="c1"&gt;// Make the callable.&lt;/span&gt;
+&lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;callable&lt;/span&gt; &lt;span class="n"&gt;f_callable&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;callable&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+&lt;span class="c1"&gt;// Main function to show how this works:&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="c1"&gt;// Initialize two arrays containing scalar values.&lt;/span&gt;
+  &lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;array&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mf"&gt;1.&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;array&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mf"&gt;2.&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+  &lt;span class="c1"&gt;// Print the dynamic type signature of the callable f_callable.&lt;/span&gt;
+  &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;f_callable&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="c1"&gt;// &amp;lt;callable &amp;lt;(float64, float64) -&amp;gt; float64&amp;gt; at 000001879424CF60&amp;gt;&lt;/span&gt;
+
+  &lt;span class="c1"&gt;// Call the callable and print its output.&lt;/span&gt;
+  &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;f_callable&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="c1"&gt;//array(-1,&lt;/span&gt;
+  &lt;span class="c1"&gt;//      type="float64")&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;The constructor for &lt;code&gt;dynd::nd::callable&lt;/code&gt; does most of the work here.
+Using some interesting templating mechanisms internally, it is able to infer the argument types and return type for the function, select the corresponding DyND types, and form a DyND type that represents an analogous function call.
+The result is a callable object that wraps a pointer to the function &lt;code&gt;f&lt;/code&gt; and knows all of the type information about the pointer it is wrapping.
+This callable can only be used with input arrays that have types that match the types for the original function's arguments.&lt;/p&gt;
+&lt;p&gt;The extra type information contained in this callable is &lt;code&gt;"(float64, float64) -&amp;gt; float64"&lt;/code&gt;, as can be seen when the callable is printed.
+The syntax here comes from the &lt;a href="http://datashape.readthedocs.org/en/latest/"&gt;datashape&lt;/a&gt; data description system—the same type system used by &lt;a href="http://blaze.readthedocs.org/en/latest/index.html"&gt;Blaze&lt;/a&gt;, &lt;a href="http://odo.readthedocs.org/en/latest/"&gt;Odo&lt;/a&gt;, and several other libraries.&lt;/p&gt;
+&lt;p&gt;One key thing to notice here is that the callable created now does its type checking dynamically rather than at compile time.
+DyND has its own system of types that is used to represent data and the functions that operate on it at runtime.
+While this does have some runtime cost, dynamic type checking removes the requirement that a C++ compiler verify the types for every operation.
+The dynamic nature of the DyND type system makes it possible to write code that operates in a generic way on both builtin and user-defined types in both static and dynamic languages.
+I'll leave discussion of the finer details of the DyND type system for another day though.&lt;/p&gt;
+&lt;h3&gt;Broadcasting&lt;/h3&gt;
+&lt;p&gt;DyND has other functions that make it possible to add additional semantics to a callable.
+These are higher-order functions (functions that operate on other functions), and they are used on existing callables rather than function pointers.
+The types for these functions are patterns that can be matched against a variety of different argument types.&lt;/p&gt;
+&lt;p&gt;Things like array broadcasting, reductions, and multiple dispatch are all currently available.
+In the case of broadcasting and reductions, the new callable calls the wrapped function many times and handles the desired iteration structure over the arrays itself.
+In the case of multiple dispatch, different implementations of a function can be called based on the types of the inputs.
+DyND's multiple dispatch semantics are currently under revision, so I'll just show broadcasting and reductions here.&lt;/p&gt;
+&lt;p&gt;DyND provides broadcasting through the function &lt;code&gt;dynd::nd::functional::elwise&lt;/code&gt;.
+It follows broadcasting semantics similar to those followed by NumPy's generalized universal functions—though it is, in many ways, more general.
+The following example shows how to use &lt;code&gt;elwise&lt;/code&gt; to create a callable that follows broadcasting semantics:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="c1"&gt;// Include &amp;lt;cmath&amp;gt; to get std::exp.&lt;/span&gt;
+&lt;span class="cp"&gt;#include &amp;lt;cmath&amp;gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include &amp;lt;iostream&amp;gt;&lt;/span&gt;
+
+&lt;span class="cp"&gt;#include &amp;lt;dynd/array.hpp&amp;gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include &amp;lt;dynd/callable.hpp&amp;gt;&lt;/span&gt;
+&lt;span class="c1"&gt;// Header containing dynd::nd::functional::elwise.&lt;/span&gt;
+&lt;span class="cp"&gt;#include &amp;lt;dynd/func/elwise.hpp&amp;gt;&lt;/span&gt;
+
+&lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="k"&gt;namespace&lt;/span&gt; &lt;span class="n"&gt;dynd&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="kt"&gt;double&lt;/span&gt; &lt;span class="nf"&gt;myfunc_core&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;double&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;double&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;callable&lt;/span&gt; &lt;span class="n"&gt;myfunc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;functional&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;elwise&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;callable&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;myfunc_core&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="c1"&gt;// Initialize some arrays to demonstrate broadcasting semantics.&lt;/span&gt;
+  &lt;span class="c1"&gt;// Use brace initialization from C++11.&lt;/span&gt;
+  &lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;array&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;{{&lt;/span&gt;&lt;span class="mf"&gt;1.&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;2.&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="mf"&gt;3.&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;4.&lt;/span&gt;&lt;span class="p"&gt;}};&lt;/span&gt;
+  &lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;array&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="mf"&gt;5.&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;6.&lt;/span&gt;&lt;span class="p"&gt;};&lt;/span&gt;
+  &lt;span class="c1"&gt;// Create an additional array with a ragged second dimension as well.&lt;/span&gt;
+  &lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;array&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;{{&lt;/span&gt;&lt;span class="mf"&gt;9.&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;10.&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="mf"&gt;11.&lt;/span&gt;&lt;span class="p"&gt;}};&lt;/span&gt;
+
+  &lt;span class="c1"&gt;// Print the dynamic type signature of the callable.&lt;/span&gt;
+  &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;myfunc&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="c1"&gt;// &amp;lt;callable &amp;lt;(Dims... * float64, Dims... * float64) -&amp;gt; Dims... * float64&amp;gt;&lt;/span&gt;
+  &lt;span class="c1"&gt;//  at 000001C223FC5BE0&amp;gt;&lt;/span&gt;
+
+  &lt;span class="c1"&gt;// Call the callable and print its output.&lt;/span&gt;
+  &lt;span class="c1"&gt;// Broadcast along the rows of a.&lt;/span&gt;
+  &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;myfunc&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="c1"&gt;// array([[-4, -8], [-6, -8]],&lt;/span&gt;
+  &lt;span class="c1"&gt;//       type="2 * 2 * float64")&lt;/span&gt;
+
+  &lt;span class="c1"&gt;// Broadcast the second row of c across the second row of a.&lt;/span&gt;
+  &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;myfunc&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="c1"&gt;// array([[ -8, -16], [-24, -28]],&lt;/span&gt;
+  &lt;span class="c1"&gt;//       type="2 * 2 * float64")&lt;/span&gt;
+
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;A similar function can be constructed in Python using DyND's Python bindings and Python 3's function type annotations.
+If Numba is installed, it is used to get JIT-compiled code that has performance relatively close to the speed of the code generated by the C++ compiler.&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;dynd&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ndt&lt;/span&gt;
+
+&lt;span class="nd"&gt;@nd.functional.elwise&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;myfunc&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ndt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ndt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;ndt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;h3&gt;Reductions&lt;/h3&gt;
+&lt;p&gt;Reductions are formed from functions that take two inputs and produce a single output.
+Examples of reductions include taking the sum, max, min, and product of the items in an array.
+Here we'll work with a reduction that takes the maximum of the absolute values of the items in an array.
+In DyND this can be implemented by using &lt;code&gt;nd::functional::reduction&lt;/code&gt; on a callable that takes two floating point inputs and returns the maximum of their absolute values.
+Here's an example:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="c1"&gt;// Include &amp;lt;algorithm&amp;gt; to get std::max.&lt;/span&gt;
+&lt;span class="cp"&gt;#include &amp;lt;algorithm&amp;gt;&lt;/span&gt;
+&lt;span class="c1"&gt;// Include &amp;lt;cmath&amp;gt; to get std::abs.&lt;/span&gt;
+&lt;span class="cp"&gt;#include &amp;lt;cmath&amp;gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include &amp;lt;iostream&amp;gt;&lt;/span&gt;
+
+&lt;span class="cp"&gt;#include &amp;lt;dynd/array.hpp&amp;gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include &amp;lt;dynd/callable.hpp&amp;gt;&lt;/span&gt;
+&lt;span class="c1"&gt;// Header containing dynd::nd::functional::reduction.&lt;/span&gt;
+&lt;span class="cp"&gt;#include &amp;lt;dynd/func/reduction.hpp&amp;gt;&lt;/span&gt;
+
+&lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="k"&gt;namespace&lt;/span&gt; &lt;span class="n"&gt;dynd&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="c1"&gt;// Wrap the function as a callable.&lt;/span&gt;
+&lt;span class="c1"&gt;// Then use dynd::nd::functional::reduction to make a reduction from it.&lt;/span&gt;
+&lt;span class="c1"&gt;// This time just wrap a C++ lambda function rather than a pointer&lt;/span&gt;
+&lt;span class="c1"&gt;// to a different function.&lt;/span&gt;
+&lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;callable&lt;/span&gt; &lt;span class="n"&gt;inf_norm&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;functional&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;reduction&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;callable&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+        &lt;span class="p"&gt;[](&lt;/span&gt;&lt;span class="kt"&gt;double&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;double&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;max&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;abs&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;abs&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;));}));&lt;/span&gt;
+
+&lt;span class="c1"&gt;// Demonstrate the reduction working along both axes simultaneously.&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;array&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;{{&lt;/span&gt;&lt;span class="mf"&gt;1.&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;2.&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="mf"&gt;3.&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;4.&lt;/span&gt;&lt;span class="p"&gt;}};&lt;/span&gt;
+
+  &lt;span class="c1"&gt;// Take the maximum absolute value over the whole array.&lt;/span&gt;
+  &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;inf_norm&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="c1"&gt;// array(4,&lt;/span&gt;
+  &lt;span class="c1"&gt;//       type="float64")&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;Again, in Python, it is relatively easy to create a similar callable.&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;dynd&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ndt&lt;/span&gt;
+
+&lt;span class="nd"&gt;@nd.functional.reduction&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;inf_norm&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ndt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ndt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;ndt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nb"&gt;max&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;abs&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="nb"&gt;abs&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;The type for the reduction callable &lt;code&gt;inf_norm&lt;/code&gt; is a bit longer.
+It is &lt;code&gt;(Dims... * float64, axes: ?Fixed * int32, identity: ?float64, keepdims: ?bool) -&amp;gt; Dims... * float64&lt;/code&gt;.
+This signature represents a callable that accepts a single input array and has several optional keyword arguments.
+In Python, passing keyword arguments to callables works the same as it would for any other function.
+Currently, in C++, initializer lists mapping strings to values are used since the names of the keyword arguments are not necessarily known at compile time.&lt;/p&gt;
+&lt;h3&gt;Exporting Callables to Python&lt;/h3&gt;
+&lt;p&gt;The fact that DyND callables are C++ objects with a single C++ type makes it easy to wrap them for use in Python.
+This is done using the wrappers for the callable class already built in to DyND's Python bindings.
+Using DyND in Cython merits a discussion of its own, so I'll only include a minimal example here.&lt;/p&gt;
+&lt;p&gt;This Cython code in particular is still using experimental interfaces.
+The import structure and function names here are very likely to change.&lt;/p&gt;
+&lt;p&gt;The first thing needed is a header that creates the desired callable.
+Since this will only be included once in a single Cython based module, additional guards to make sure the header is only applied once are not needed.&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="c1"&gt;// inf_norm_reduction.hpp&lt;/span&gt;
+&lt;span class="cp"&gt;#include &amp;lt;algorithm&amp;gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include &amp;lt;cmath&amp;gt;&lt;/span&gt;
+
+&lt;span class="cp"&gt;#include &amp;lt;dynd/array.hpp&amp;gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include &amp;lt;dynd/callable.hpp&amp;gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include &amp;lt;dynd/func/reduction.hpp&amp;gt;&lt;/span&gt;
+
+&lt;span class="k"&gt;static&lt;/span&gt; &lt;span class="n"&gt;dynd&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;callable&lt;/span&gt; &lt;span class="n"&gt;inf_norm&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;
+    &lt;span class="n"&gt;dynd&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;functional&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;reduction&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dynd&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;callable&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+        &lt;span class="p"&gt;[](&lt;/span&gt;&lt;span class="kt"&gt;double&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;double&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;max&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;abs&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;abs&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;));}));&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;The callable can now be exposed to Python through Cython.
+Some work still needs to be done in DyND's Python bindings to simplify the system-specific configuration for linking extensions like this to the DyND libraries.
+For simplicity, I'll just show the commented Cython distutils directives that can be used to build this file on 64 bit Windows with a libdynd built and installed from source in the default location.
+Similar configurations can be put together for other systems.&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="c"&gt;# py_inf_norm.pyx&lt;/span&gt;
+&lt;span class="c"&gt;# distutils: include_dirs = "c:/Program Files/libdynd/include"&lt;/span&gt;
+&lt;span class="c"&gt;# distutils: library_dirs = "c:/Program Files/libdynd/lib"&lt;/span&gt;
+&lt;span class="c"&gt;# distutils: libraries = ["libdynd", "libdyndt"]&lt;/span&gt;
+
+&lt;span class="k"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;dynd&lt;/span&gt; &lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ndt&lt;/span&gt;
+
+&lt;span class="k"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;dynd.cpp.callable&lt;/span&gt; &lt;span class="k"&gt;cimport&lt;/span&gt; &lt;span class="nb"&gt;callable&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;cpp_callable&lt;/span&gt;
+&lt;span class="k"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;dynd.nd.callable&lt;/span&gt; &lt;span class="k"&gt;cimport&lt;/span&gt; &lt;span class="n"&gt;dynd_nd_callable_from_cpp&lt;/span&gt;
+
+&lt;span class="k"&gt;cdef&lt;/span&gt; &lt;span class="kr"&gt;extern&lt;/span&gt; &lt;span class="k"&gt;from&lt;/span&gt; &lt;span class="s"&gt;"inf_norm_reduction.hpp"&lt;/span&gt; &lt;span class="k"&gt;nogil&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="c"&gt;# Have Cython call this "cpp_inf_norm", but use "inf_norm" in&lt;/span&gt;
+    &lt;span class="c"&gt;# the generated C++ source.&lt;/span&gt;
+    &lt;span class="n"&gt;cpp_callable&lt;/span&gt; &lt;span class="n"&gt;inf_norm&lt;/span&gt;
+
+&lt;span class="n"&gt;py_inf_norm&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;dynd_nd_callable_from_cpp&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;inf_norm&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;To build the extension I used the following setup file and ran it with the command &lt;code&gt;python setup.py build_ext --inplace&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="c"&gt;# setup.py&lt;/span&gt;
+&lt;span class="c"&gt;# This is a fairly standard setup script for a minimal Cython module.&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;distutils.core&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;setup&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;Cython.Build&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;cythonize&lt;/span&gt;
+&lt;span class="n"&gt;setup&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ext_modules&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;cythonize&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"py_inf_norm.pyx"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;language&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;'c++'&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;h3&gt;A Short Benchmark&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;elwise&lt;/code&gt; and &lt;code&gt;reduction&lt;/code&gt; are not heavily optimized yet, but, using IPython's &lt;code&gt;timeit&lt;/code&gt; magic, it's clear that DyND is already doing well:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;numpy&lt;/span&gt; &lt;span class="kn"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;np&lt;/span&gt;
+
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;py_inf_norm&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;py_inf_norm&lt;/span&gt;
+
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;random&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;rand&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;10000&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10000&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt;&lt;span class="n"&gt;timeit&lt;/span&gt; &lt;span class="n"&gt;py_inf_norm&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;best&lt;/span&gt; &lt;span class="n"&gt;of&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;231&lt;/span&gt; &lt;span class="n"&gt;ms&lt;/span&gt; &lt;span class="n"&gt;per&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt;
+
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt;&lt;span class="n"&gt;timeit&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;linalg&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;norm&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ravel&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt; &lt;span class="nb"&gt;ord&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;inf&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;best&lt;/span&gt; &lt;span class="n"&gt;of&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;393&lt;/span&gt; &lt;span class="n"&gt;ms&lt;/span&gt; &lt;span class="n"&gt;per&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;These are just a few examples of the myriad of things you can do with DyND's callables.
+For more information take a look at our &lt;a href="https://github.com/libdynd/libdynd"&gt;github repo&lt;/a&gt; as well as &lt;a href="http://insertinterestingnamehere.github.io/posts/libdynd.org"&gt;libdynd.org&lt;/a&gt;.
+We'll be adding a lot more functionality, documentation, and examples in the coming months.&lt;/p&gt;&lt;/div&gt;</description><guid>http://insertinterestingnamehere.github.io/posts/dynd-callables-speed-and-flexibility.html</guid><pubDate>Tue, 15 Mar 2016 19:22:33 GMT</pubDate></item><item><title>GSOC Concluding Thoughts</title><link>http://insertinterestingnamehere.github.io/posts/gsoc-concluding-thoughts.html</link><dc:creator>Ian Henriksen</dc:creator><description>&lt;div&gt;&lt;p&gt;After many long weeks of hunting bugs and reorganizing code, my GSOC has come to an end.
 My project turned out significantly different than I had expected, but much of my work still proved to be very valuable.
 I originally envisioned being able to use many of DyND's features within Cython in a transparent way.
 Much of the work that I did was in fixing bugs and laying the groundwork for making things like that possible.
@@ -145,12 +397,12 @@ For example:&lt;/p&gt;
 &lt;span class="k"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;libcpp.string&lt;/span&gt; &lt;span class="k"&gt;cimport&lt;/span&gt; &lt;span class="n"&gt;string&lt;/span&gt;
 
 &lt;span class="k"&gt;cdef&lt;/span&gt; &lt;span class="kr"&gt;extern&lt;/span&gt; &lt;span class="k"&gt;from&lt;/span&gt; &lt;span class="s"&gt;"variadic_print.hpp"&lt;/span&gt; &lt;span class="k"&gt;nogil&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-    &lt;span class="nb"&gt;void&lt;/span&gt; &lt;span class="n"&gt;cpp_print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;...&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;void&lt;/span&gt; &lt;span class="n"&gt;cpp_print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;...&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
 &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;test&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
     &lt;span class="n"&gt;cdef&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
         &lt;span class="nb"&gt;int&lt;/span&gt; &lt;span class="n"&gt;thing1&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mf"&gt;1&lt;/span&gt;
-        &lt;span class="nb"&gt;double&lt;/span&gt; &lt;span class="n"&gt;thing2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mf"&gt;2&lt;/span&gt;
+        &lt;span class="n"&gt;double&lt;/span&gt; &lt;span class="n"&gt;thing2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mf"&gt;2&lt;/span&gt;
         &lt;span class="nb"&gt;long&lt;/span&gt; &lt;span class="nb"&gt;long&lt;/span&gt; &lt;span class="n"&gt;thing3&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mf"&gt;3&lt;/span&gt;
         &lt;span class="nb"&gt;float&lt;/span&gt; &lt;span class="n"&gt;thing4&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mf"&gt;4&lt;/span&gt;
         &lt;span class="n"&gt;string&lt;/span&gt; &lt;span class="n"&gt;thing5&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;"5"&lt;/span&gt;

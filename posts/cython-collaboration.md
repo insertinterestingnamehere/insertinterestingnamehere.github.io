@@ -79,7 +79,7 @@ While discussing non-type template parameters, we also discussed adding support 
 The consensus on the syntax was to allow variadic template arguments to be used by simply adding an ellipsis where the C++ expression `typenames ...` would go.
 I also proposed allowing something like `types ...`, and that syntax may be adopted in the end anyway.
 I didn't get the time to add that feature, but at least the design ideas are there for someone to use later on.
-Currently, due to some incomplete type checking, variadic templated functions are already usable in Cython, but this is really a bug and not a feature.
+Currently, due to some incomplete type checking, variadic templated functions are already usable in Cython, but this is really a bug and not a feature. (EDIT: This is actually just a creative use of the fact that C variadic functions accept pretty much anything and is most certainly not a bug.)
 For example:
 
 ```C++
@@ -121,6 +121,9 @@ def test():
 
 This definitely isn't a feature though.
 It's just a cleverly exploited bug that hasn't been fixed yet and is certainly not usable in anything more than entertaining examples.
+(EDIT: yep, it's a feature, though it wasn't directly made for templates.
+It applies to situations where the return type is well defined regardless of the input types and no explicit instantiations are needed to resolve the function call.
+In other words, anything that looks like a C variadic call when it is actually used, can be wrapped this way instead of trying to mess with declaring multiple template interfaces.)
 
 It would also be nice to see things like overloading in-place operations and overloading `operator||` and `operator&&` in Cython at some point, but I haven't done that yet.
 

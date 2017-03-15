@@ -2,7 +2,6 @@
 <html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="en">
 <head>
 <meta charset="utf-8">
-<base href="http://insertinterestingnamehere.github.io/posts/structure-plans-and-more-examples.html">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Structure Plans and More Examples | Ian's Blog</title>
 <link href="../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
@@ -10,7 +9,8 @@
 <link href="../assets/css/code.css" rel="stylesheet" type="text/css">
 <link href="../assets/css/colorbox.css" rel="stylesheet" type="text/css">
 <link href="../assets/css/theme.css" rel="stylesheet" type="text/css">
-<meta content="#5670d4" name="theme-color">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="../rss.xml">
 <link rel="canonical" href="http://insertinterestingnamehere.github.io/posts/structure-plans-and-more-examples.html">
 <!--[if lt IE 9]><script src="../assets/js/html5.js"></script><![endif]--><meta name="author" content="Ian Henriksen">
@@ -119,11 +119,11 @@ I expect that we'll be able to get those resolved and I'll be able to post a wor
 Arrfuncs operate on DyND arrays the same way that gufuncs operate on NumPy arrays.
 I found that arrfuncs are surprisingly easy to both construct and use.
 Here's a simple program that shows some arrfuncs in action:</p>
-<pre class="code literal-block"><span class="cp">#include &lt;iostream&gt;</span>
-<span class="cp">#include &lt;dynd/array.hpp&gt;</span>
-<span class="cp">#include &lt;dynd/func/arrfunc.hpp&gt;</span>
-<span class="cp">#include &lt;dynd/func/apply.hpp&gt;</span>
-<span class="cp">#include &lt;dynd/func/elwise.hpp&gt;</span>
+<pre class="code literal-block"><span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;dynd/array.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;dynd/func/arrfunc.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;dynd/func/apply.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;dynd/func/elwise.hpp&gt;</span><span class="cp"></span>
 
 <span class="k">using</span> <span class="k">namespace</span> <span class="n">dynd</span><span class="p">;</span>
 
@@ -179,7 +179,7 @@ Here's a simple program that shows some arrfuncs in action:</p>
 
 
 <p>I compiled this C++ file on Windows with a recent MinGW-w64 g++ using the command</p>
-<pre class="code literal-block">g++ -O3 -I<span class="s2">"c:/Program Files (x86)/libdynd/include"</span> -std<span class="o">=</span>c++11 ufunc.cpp -L<span class="s2">"c:/Program Files (x86)/libdynd/lib/static"</span> -ldynd -o ufunc.exe
+<pre class="code literal-block"><span></span>g++ -O3 -I<span class="s2">"c:/Program Files (x86)/libdynd/include"</span> -std<span class="o">=</span>c++11 ufunc.cpp -L<span class="s2">"c:/Program Files (x86)/libdynd/lib/static"</span> -ldynd -o ufunc.exe
 </pre>
 
 
@@ -206,7 +206,7 @@ In another few weeks I expect to be able to do this sort of thing just as natura
         <!--End of body content-->
 
         <footer id="footer">
-            Contents © 2016         <a href="mailto:insertinterestingnamehere@gmail.com">Ian Henriksen</a> - Powered by         <a href="http://getnikola.com" rel="nofollow">Nikola</a>         
+            Contents © 2017         <a href="mailto:insertinterestingnamehere@gmail.com">Ian Henriksen</a> - Powered by         <a href="http://getnikola.com" rel="nofollow">Nikola</a>         
             
         </footer>
 </div>

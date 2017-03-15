@@ -2,7 +2,6 @@
 <html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="en">
 <head>
 <meta charset="utf-8">
-<base href="http://insertinterestingnamehere.github.io/posts/cython-collaboration.html">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cython Collaboration | Ian's Blog</title>
 <link href="../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
@@ -10,7 +9,8 @@
 <link href="../assets/css/code.css" rel="stylesheet" type="text/css">
 <link href="../assets/css/colorbox.css" rel="stylesheet" type="text/css">
 <link href="../assets/css/theme.css" rel="stylesheet" type="text/css">
-<meta content="#5670d4" name="theme-color">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="../rss.xml">
 <link rel="canonical" href="http://insertinterestingnamehere.github.io/posts/cython-collaboration.html">
 <!--[if lt IE 9]><script src="../assets/js/html5.js"></script><![endif]--><meta name="author" content="Ian Henriksen">
@@ -117,7 +117,7 @@ In theory, good removal of temporaries and good branch prediction should make it
 Either way, that was the only way to properly conform to the existing API for overloaded operators that is already documented and used extensively in Cython.
 At some future point it would be nice to add a way to let users consolidate different try-except blocks, but that is well outside the scope of my current project.</p>
 <p>Thanks to the exception handling logic that I've added, things like the following raise an appropriate Python exception now rather than crash the Python interpreter:</p>
-<pre class="code literal-block"><span class="k">cdef</span> <span class="kr">extern</span> <span class="k">from</span> <span class="s">"myheader.hpp"</span> <span class="k">nogil</span><span class="p">:</span>
+<pre class="code literal-block"><span></span><span class="k">cdef</span> <span class="kr">extern</span> <span class="k">from</span> <span class="s">"myheader.hpp"</span> <span class="k">nogil</span><span class="p">:</span>
     <span class="n">cppclass</span> <span class="n">thing</span><span class="p">:</span>
         <span class="n">thing</span><span class="p">()</span>
         <span class="n">thing</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
@@ -157,11 +157,11 @@ This is another feature that, given how much time I have left, I'll probably hav
 The consensus on the syntax was to allow variadic template arguments to be used by simply adding an ellipsis where the C++ expression <code>typenames ...</code> would go.
 I also proposed allowing something like <code>types ...</code>, and that syntax may be adopted in the end anyway.
 I didn't get the time to add that feature, but at least the design ideas are there for someone to use later on.
-Currently, due to some incomplete type checking, variadic templated functions are already usable in Cython, but this is really a bug and not a feature.
+Currently, due to some incomplete type checking, variadic templated functions are already usable in Cython, but this is really a bug and not a feature. (EDIT: This is actually just a creative use of the fact that C variadic functions accept pretty much anything and is most certainly not a bug.)
 For example:</p>
-<pre class="code literal-block"><span class="c1">// variadic_print.hpp</span>
+<pre class="code literal-block"><span></span><span class="c1">// variadic_print.hpp</span>
 <span class="cp">#pragma once</span>
-<span class="cp">#include &lt;iostream&gt;</span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
 
 <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
 <span class="kt">void</span> <span class="n">cpp_print</span><span class="p">(</span><span class="n">T</span> <span class="n">value</span><span class="p">){</span>
@@ -176,7 +176,7 @@ For example:</p>
 </pre>
 
 
-<pre class="code literal-block"><span class="c"># cpp_print.pyx</span>
+<pre class="code literal-block"><span></span><span class="c"># cpp_print.pyx</span>
 <span class="c"># The extra compile arguments here assume gcc or clang is used.</span>
 <span class="c"># distutils: extra_compile_args = ['-std=c++11']</span>
 
@@ -186,7 +186,7 @@ For example:</p>
     <span class="n">void</span> <span class="n">cpp_print</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
-    <span class="n">cdef</span><span class="p">:</span>
+    <span class="k">cdef</span><span class="p">:</span>
         <span class="nb">int</span> <span class="n">thing1</span> <span class="o">=</span> <span class="mf">1</span>
         <span class="n">double</span> <span class="n">thing2</span> <span class="o">=</span> <span class="mf">2</span>
         <span class="nb">long</span> <span class="nb">long</span> <span class="n">thing3</span> <span class="o">=</span> <span class="mf">3</span>
@@ -197,7 +197,10 @@ For example:</p>
 
 
 <p>This definitely isn't a feature though.
-It's just a cleverly exploited bug that hasn't been fixed yet and is certainly not usable in anything more than entertaining examples.</p>
+It's just a cleverly exploited bug that hasn't been fixed yet and is certainly not usable in anything more than entertaining examples.
+(EDIT: yep, it's a feature, though it wasn't directly made for templates.
+It applies to situations where the return type is well defined regardless of the input types and no explicit instantiations are needed to resolve the function call.
+In other words, anything that looks like a C variadic call when it is actually used, can be wrapped this way instead of trying to mess with declaring multiple template interfaces.)</p>
 <p>It would also be nice to see things like overloading in-place operations and overloading <code>operator||</code> and <code>operator&amp;&amp;</code> in Cython at some point, but I haven't done that yet.</p>
 <p>All things considered, even though I wasn't able to accomplish all I had hoped in Cython, I was still able to do a lot of useful things.
 The existing design philosophy in Cython didn't prove to be completely amenable to exposing a Cython-level API for a relatively advanced C++ library.
@@ -235,7 +238,7 @@ The infrastructure is already in place for most of the core pieces that need to 
         <!--End of body content-->
 
         <footer id="footer">
-            Contents © 2016         <a href="mailto:insertinterestingnamehere@gmail.com">Ian Henriksen</a> - Powered by         <a href="http://getnikola.com" rel="nofollow">Nikola</a>         
+            Contents © 2017         <a href="mailto:insertinterestingnamehere@gmail.com">Ian Henriksen</a> - Powered by         <a href="http://getnikola.com" rel="nofollow">Nikola</a>         
             
         </footer>
 </div>

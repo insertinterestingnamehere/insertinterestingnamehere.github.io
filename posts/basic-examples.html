@@ -2,7 +2,6 @@
 <html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="en">
 <head>
 <meta charset="utf-8">
-<base href="http://insertinterestingnamehere.github.io/posts/basic-examples.html">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Basic Examples | Ian's Blog</title>
 <link href="../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
@@ -10,7 +9,8 @@
 <link href="../assets/css/code.css" rel="stylesheet" type="text/css">
 <link href="../assets/css/colorbox.css" rel="stylesheet" type="text/css">
 <link href="../assets/css/theme.css" rel="stylesheet" type="text/css">
-<meta content="#5670d4" name="theme-color">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="../rss.xml">
 <link rel="canonical" href="http://insertinterestingnamehere.github.io/posts/basic-examples.html">
 <!--[if lt IE 9]><script src="../assets/js/html5.js"></script><![endif]--><meta name="author" content="Ian Henriksen">
@@ -116,7 +116,7 @@ It is used to specify ranges of indices over which to slice an array.
 Since multiple arguments are not allowed for the indexing operator in C++, the call operator is used for array slicing.</p>
 <p>For compiling these examples on Windows, I used gfortran and a recent development version (3.7.0 dev) of clang compiled with mingw-w64.
 The exact compiler calls replacing "(algorithm)" with the name of each particular algorithm were</p>
-<pre class="code literal-block">clang++ -fPIC -O3 -I<span class="s2">"c:/Program Files (x86)/libdynd/include"</span> -std<span class="o">=</span>c++11 <span class="o">(</span>algorithm<span class="o">)</span>.cpp -L<span class="s2">"c:/Program Files (x86)/libdynd/lib/static"</span> -ldynd -o <span class="o">(</span>algorithm<span class="o">)</span>.exe
+<pre class="code literal-block"><span></span>clang++ -fPIC -O3 -I<span class="s2">"c:/Program Files (x86)/libdynd/include"</span> -std<span class="o">=</span>c++11 <span class="o">(</span>algorithm<span class="o">)</span>.cpp -L<span class="s2">"c:/Program Files (x86)/libdynd/lib/static"</span> -ldynd -o <span class="o">(</span>algorithm<span class="o">)</span>.exe
 gfortran -fPIC -O3 <span class="o">(</span>algorithm<span class="o">)</span>.f90 -o <span class="o">(</span>algorithm<span class="o">)</span>_f.exe
 </pre>
 
@@ -126,7 +126,7 @@ The same set of flags should work with recent versions of clang++ and g++.</p>
 <h3>Horner's Algorithm</h3>
 <p>Horner's algorithm is the standard algorithm for evaluating a power basis polynomial at a parameter value, given the coefficients for the polynomial.
 Here the coefficients are assumed to be given in order from highest to lowest degree.</p>
-<pre class="code literal-block"><span class="c"># Python</span>
+<pre class="code literal-block"><span></span><span class="c1"># Python</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
@@ -136,15 +136,15 @@ Here the coefficients are assumed to be given in order from highest to lowest de
         <span class="n">v</span> <span class="o">=</span> <span class="n">t</span> <span class="o">*</span> <span class="n">v</span> <span class="o">+</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">v</span>
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s">'d'</span><span class="p">)</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s1">'d'</span><span class="p">)</span>
     <span class="k">print</span><span class="p">(</span><span class="n">horner</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="o">.</span><span class="mi">3333</span><span class="p">))</span>
 </pre>
 
 
-<pre class="code literal-block"><span class="c1">// C++</span>
-<span class="cp">#include &lt;iostream&gt;</span>
-<span class="cp">#include &lt;dynd/array.hpp&gt;</span>
+<pre class="code literal-block"><span></span><span class="c1">// C++</span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;dynd/array.hpp&gt;</span><span class="cp"></span>
 
 <span class="k">using</span> <span class="k">namespace</span> <span class="n">dynd</span><span class="p">;</span>
 
@@ -161,7 +161,7 @@ Here the coefficients are assumed to be given in order from highest to lowest de
 </pre>
 
 
-<pre class="code literal-block"><span class="c">! Fortran</span>
+<pre class="code literal-block"><span></span><span class="c">! Fortran</span>
 <span class="k">module </span><span class="n">hornermodule</span>
 <span class="k">implicit none</span>
 <span class="k">contains</span>
@@ -191,7 +191,7 @@ Here the coefficients are assumed to be given in order from highest to lowest de
 <h3>Decasteljau's Algorithm</h3>
 <p>Decasteljau's Algorithm is used to evaluate polynomials in Bernstein form.
 It is also often used to evaluate Bézier curves.</p>
-<pre class="code literal-block"><span class="c"># Python</span>
+<pre class="code literal-block"><span></span><span class="c1"># Python</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
@@ -200,15 +200,15 @@ It is also often used to evaluate Bézier curves.</p>
         <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">a</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
     <span class="k">return</span> <span class="n">a</span>
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s">'d'</span><span class="p">)</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s1">'d'</span><span class="p">)</span>
     <span class="k">print</span><span class="p">(</span><span class="n">decasteljau</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="o">.</span><span class="mi">25</span><span class="p">))</span>
 </pre>
 
 
-<pre class="code literal-block"><span class="c1">// C++</span>
-<span class="cp">#include &lt;iostream&gt;</span>
-<span class="cp">#include &lt;dynd/array.hpp&gt;</span>
+<pre class="code literal-block"><span></span><span class="c1">// C++</span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;dynd/array.hpp&gt;</span><span class="cp"></span>
 
 <span class="k">using</span> <span class="k">namespace</span> <span class="n">dynd</span><span class="p">;</span>
 
@@ -225,7 +225,7 @@ It is also often used to evaluate Bézier curves.</p>
 
 
 <p>In the Fortran version of this algorithm, dynamic allocation within the function is needed.</p>
-<pre class="code literal-block"><span class="c">! Fortran</span>
+<pre class="code literal-block"><span></span><span class="c">! Fortran</span>
 <span class="k">module </span><span class="n">decasteljaumodule</span>
 <span class="k">implicit none</span>
 <span class="k">contains</span>
@@ -257,7 +257,7 @@ It is also often used to evaluate Bézier curves.</p>
 <p>Clenshaw's algorithm provides a simple recurrence for evaluating Chebyshev polynomials.
 There is a similar algorithm for evaluating Legendre polynomials, but we will not demonstrate it here.
 The code here is a simplified adaptation of the code </p>
-<pre class="code literal-block"><span class="c"># Python</span>
+<pre class="code literal-block"><span></span><span class="c1"># Python</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
@@ -267,15 +267,15 @@ The code here is a simplified adaptation of the code </p>
         <span class="n">c0</span><span class="p">,</span> <span class="n">c1</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="o">-</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c0</span> <span class="o">+</span> <span class="n">c1</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">c0</span> <span class="o">+</span> <span class="n">c1</span> <span class="o">*</span> <span class="n">t</span>
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">],</span> <span class="s">'d'</span><span class="p">)</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">],</span> <span class="s1">'d'</span><span class="p">)</span>
     <span class="k">print</span><span class="p">(</span><span class="n">clenshaw</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="o">-.</span><span class="mi">5</span><span class="p">))</span>
 </pre>
 
 
-<pre class="code literal-block"><span class="c1">// C++</span>
-<span class="cp">#include &lt;iostream&gt;</span>
-<span class="cp">#include &lt;dynd/array.hpp&gt;</span>
+<pre class="code literal-block"><span></span><span class="c1">// C++</span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;dynd/array.hpp&gt;</span><span class="cp"></span>
 
 <span class="k">using</span> <span class="k">namespace</span> <span class="n">dynd</span><span class="p">;</span>
 
@@ -294,7 +294,7 @@ The code here is a simplified adaptation of the code </p>
 </pre>
 
 
-<pre class="code literal-block"><span class="c">! Fortran</span>
+<pre class="code literal-block"><span></span><span class="c">! Fortran</span>
 <span class="k">module </span><span class="n">clenshawmodule</span>
 <span class="k">implicit none</span>
 <span class="k">contains</span>
@@ -343,7 +343,7 @@ The code here is a simplified adaptation of the code </p>
         <!--End of body content-->
 
         <footer id="footer">
-            Contents © 2016         <a href="mailto:insertinterestingnamehere@gmail.com">Ian Henriksen</a> - Powered by         <a href="http://getnikola.com" rel="nofollow">Nikola</a>         
+            Contents © 2017         <a href="mailto:insertinterestingnamehere@gmail.com">Ian Henriksen</a> - Powered by         <a href="http://getnikola.com" rel="nofollow">Nikola</a>         
             
         </footer>
 </div>

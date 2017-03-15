@@ -2,7 +2,6 @@
 <html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="en">
 <head>
 <meta charset="utf-8">
-<base href="http://insertinterestingnamehere.github.io/posts/gsoc-concluding-thoughts.html">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>GSOC Concluding Thoughts | Ian's Blog</title>
 <link href="../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
@@ -10,7 +9,8 @@
 <link href="../assets/css/code.css" rel="stylesheet" type="text/css">
 <link href="../assets/css/colorbox.css" rel="stylesheet" type="text/css">
 <link href="../assets/css/theme.css" rel="stylesheet" type="text/css">
-<meta content="#5670d4" name="theme-color">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="../rss.xml">
 <link rel="canonical" href="http://insertinterestingnamehere.github.io/posts/gsoc-concluding-thoughts.html">
 <!--[if lt IE 9]><script src="../assets/js/html5.js"></script><![endif]--><meta name="author" content="Ian Henriksen">
@@ -101,10 +101,10 @@ There are still several bugs to fix and features to add in Cython before that's 
 My bugfixes served to simplify some of the difficult problems that arise when wrapping and interfacing with nontrivial C++ code.
 My restructuring of the DyND Python bindings, as expected, made it much easier to transition between the C++-level DyND constructs and the Python classes used in its Python bindings.</p>
 <p>Here's a minimum working example that works with the latest versions of libdynd and dynd-python (as of this post).</p>
-<pre class="code literal-block"><span class="c1">// myfunc.cpp</span>
-<span class="cp">#include "dynd/func/callable.hpp"</span>
-<span class="cp">#include "dynd/func/apply.hpp"</span>
-<span class="cp">#include "dynd/func/elwise.hpp"</span>
+<pre class="code literal-block"><span></span><span class="c1">// myfunc.cpp</span>
+<span class="cp">#include</span> <span class="cpf">"dynd/func/callable.hpp"</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">"dynd/func/apply.hpp"</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">"dynd/func/elwise.hpp"</span><span class="cp"></span>
 
 <span class="c1">// Write a function to turn into a DyND callable.</span>
 <span class="kt">double</span> <span class="nf">f</span><span class="p">(</span><span class="kt">double</span> <span class="n">a</span><span class="p">,</span> <span class="kt">double</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
@@ -116,7 +116,7 @@ My restructuring of the DyND Python bindings, as expected, made it much easier t
 </pre>
 
 
-<pre class="code literal-block"><span class="c"># custom_callable.pyx</span>
+<pre class="code literal-block"><span></span><span class="c"># custom_callable.pyx</span>
 <span class="c"># distutils: extra_compile_args = -std=c++11</span>
 <span class="c"># distutils: libraries = dynd</span>
 
@@ -140,10 +140,10 @@ My restructuring of the DyND Python bindings, as expected, made it much easier t
 </pre>
 
 
-<pre class="code literal-block"><span class="c"># setup.py</span>
+<pre class="code literal-block"><span></span><span class="c1"># setup.py</span>
 <span class="kn">from</span> <span class="nn">distutils.core</span> <span class="kn">import</span> <span class="n">setup</span>
 <span class="kn">from</span> <span class="nn">Cython.Build</span> <span class="kn">import</span> <span class="n">cythonize</span>
-<span class="n">setup</span><span class="p">(</span><span class="n">ext_modules</span><span class="o">=</span><span class="n">cythonize</span><span class="p">(</span><span class="s">"*.pyx"</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s">'c++'</span><span class="p">))</span>
+<span class="n">setup</span><span class="p">(</span><span class="n">ext_modules</span><span class="o">=</span><span class="n">cythonize</span><span class="p">(</span><span class="s2">"*.pyx"</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s1">'c++'</span><span class="p">))</span>
 </pre>
 
 
@@ -171,7 +171,7 @@ This example uses the strengths of both Cython and Dynd to provide useful and si
         <!--End of body content-->
 
         <footer id="footer">
-            Contents © 2016         <a href="mailto:insertinterestingnamehere@gmail.com">Ian Henriksen</a> - Powered by         <a href="http://getnikola.com" rel="nofollow">Nikola</a>         
+            Contents © 2017         <a href="mailto:insertinterestingnamehere@gmail.com">Ian Henriksen</a> - Powered by         <a href="http://getnikola.com" rel="nofollow">Nikola</a>         
             
         </footer>
 </div>

@@ -157,7 +157,8 @@ This is another feature that, given how much time I have left, I'll probably hav
 The consensus on the syntax was to allow variadic template arguments to be used by simply adding an ellipsis where the C++ expression <code>typenames ...</code> would go.
 I also proposed allowing something like <code>types ...</code>, and that syntax may be adopted in the end anyway.
 I didn't get the time to add that feature, but at least the design ideas are there for someone to use later on.
-Currently, due to some incomplete type checking, variadic templated functions are already usable in Cython, but this is really a bug and not a feature. (EDIT: This is actually just a creative use of the fact that C variadic functions accept pretty much anything and is most certainly not a bug.)
+Currently, due to some incomplete type checking, variadic templated functions are already usable in Cython, but this is really a bug and not a feature.
+(EDIT: This is actually just a creative use of the fact that C variadic functions accept pretty much anything and is most certainly not a bug.)
 For example:</p>
 <pre class="code literal-block"><span></span><span class="c1">// variadic_print.hpp</span>
 <span class="cp">#pragma once</span>
@@ -200,7 +201,8 @@ For example:</p>
 It's just a cleverly exploited bug that hasn't been fixed yet and is certainly not usable in anything more than entertaining examples.
 (EDIT: yep, it's a feature, though it wasn't directly made for templates.
 It applies to situations where the return type is well defined regardless of the input types and no explicit instantiations are needed to resolve the function call.
-In other words, anything that looks like a C variadic call when it is actually used, can be wrapped this way instead of trying to mess with declaring multiple template interfaces.)</p>
+In other words, anything that looks like a C variadic call when it is actually used, can be wrapped this way instead of trying to mess with declaring multiple template interfaces.
+Pretending a template is a variadic call is more of an exploit than a standard way of doing things, but it can give the desired results provided that explicit instantiations are not needed and nobody tries to do anything silly like taking the address of the template masquerading as a variadic function.)</p>
 <p>It would also be nice to see things like overloading in-place operations and overloading <code>operator||</code> and <code>operator&amp;&amp;</code> in Cython at some point, but I haven't done that yet.</p>
 <p>All things considered, even though I wasn't able to accomplish all I had hoped in Cython, I was still able to do a lot of useful things.
 The existing design philosophy in Cython didn't prove to be completely amenable to exposing a Cython-level API for a relatively advanced C++ library.

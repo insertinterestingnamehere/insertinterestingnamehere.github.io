@@ -41,6 +41,7 @@ Arrfuncs operate on DyND arrays the same way that gufuncs operate on NumPy array
 I found that arrfuncs are surprisingly easy to both construct and use.
 Here's a simple program that shows some arrfuncs in action:
 
+[//]: # ({% raw %})
 ```C++
 #include <iostream>
 #include <dynd/array.hpp>
@@ -99,6 +100,7 @@ int main() {
   print(norm2(a, b));
 }
 ```
+[//]: # ({% endraw %})
 
 I compiled this C++ file on Windows with a recent MinGW-w64 g++ using the command
 ```shell

@@ -3,7 +3,7 @@
 .. slug: first-impressions-and-overcoming-compilation-errors
 .. date: 2015-05-21 22:23:11 UTC-06:00
 .. tags: 
-.. category: 
+.. category: DyND 
 .. link: 
 .. description: 
 .. type: text

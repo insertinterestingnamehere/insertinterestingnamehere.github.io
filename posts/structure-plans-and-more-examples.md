@@ -3,7 +3,7 @@
 .. slug: structure-plans-and-more-examples
 .. date: 2015-06-23 15:15:07 UTC-06:00
 .. tags: 
-.. category: 
+.. category: DyND 
 .. link: 
 .. description: 
 .. type: text

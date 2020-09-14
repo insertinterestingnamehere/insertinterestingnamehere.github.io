@@ -3,7 +3,7 @@
 .. slug: gsoc-concluding-thoughts
 .. date: 2015-08-22 22:30:52 UTC-06:00
 .. tags: 
-.. category: 
+.. category: DyND 
 .. link: 
 .. description: 
 .. type: text

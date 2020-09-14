@@ -3,7 +3,7 @@
 .. slug: dynd-callables-speed-and-flexibility
 .. date: 2016-03-15 13:22:33 UTC-06:00
 .. tags: 
-.. category: 
+.. category: DyND 
 .. link: 
 .. description: 
 .. type: text

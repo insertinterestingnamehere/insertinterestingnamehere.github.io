@@ -3,7 +3,7 @@
 .. slug: fixing-cython-bugs
 .. date: 2015-07-13 13:26:32 UTC-06:00
 .. tags: 
-.. category: 
+.. category: DyND
 .. link: 
 .. description: 
 .. type: text

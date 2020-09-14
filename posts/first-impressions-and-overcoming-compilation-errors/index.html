@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>First Impressions And Overcoming Compilation Errors | Ian's Blog</title>
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<link href="https://fonts.googleapis.com/css?family=Playfair+Display:700,900" rel="stylesheet">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="http://insertinterestingnamehere.github.io/posts/first-impressions-and-overcoming-compilation-errors/">
+<!--[if lt IE 9]><script src="../../assets/js/html5.js"></script><![endif]--><meta name="author" content="Ian Henriksen">
+<link rel="next" href="../basic-examples/" title="Basic Examples" type="text/html">
+<meta property="og:site_name" content="Ian's Blog">
+<meta property="og:title" content="First Impressions And Overcoming Compilation Errors">
+<meta property="og:url" content="http://insertinterestingnamehere.github.io/posts/first-impressions-and-overcoming-compilation-errors/">
+<meta property="og:description" content="Most of the past month was spent in a mad dash to finish my master's thesis.
+Who knew that writing 100 pages of original research in math could take so long?
+Either way, I'm finished and quite pleased">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2015-05-21T22:23:11-06:00">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Header and menu bar -->
+<div class="container">
+      <header class="blog-header py-3"><div class="row nbb-header align-items-center">
+          <div class="col-md-3 col-xs-2 col-sm-2" style="width: auto;">
+            <button class="navbar-toggler navbar-light bg-light nbb-navbar-toggler" type="button" data-toggle="collapse" data-target=".bs-nav-collapsible" aria-controls="bs-navbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse bs-nav-collapsible bootblog4-search-form-holder">
+                
+            </div>
+        </div>
+          <div class="col-md-6 col-xs-10 col-sm-10 bootblog4-brand" style="width: auto;">
+            <a class="navbar-brand blog-header-logo text-dark" href="../../">
+
+            <span id="blog-title">Ian's Blog</span>
+        </a>
+          </div>
+            <div class="col-md-3 justify-content-end align-items-center bs-nav-collapsible collapse flex-collapse bootblog4-right-nav">
+            <nav class="navbar navbar-light bg-white"><ul class="navbar-nav bootblog4-right-nav">
+<li class="nav-item">
+    <a href="index.md" id="sourcelink" class="nav-link">Source</a>
+    </li>
+
+
+                    
+            </ul></nav>
+</div>
+    </div>
+</header><nav class="navbar navbar-expand-md navbar-light bg-white static-top"><div class="collapse navbar-collapse bs-nav-collapsible" id="bs-navbar">
+            <ul class="navbar-nav nav-fill d-flex w-100">
+<li class="nav-item">
+<a href="../../archive.html" class="nav-link">Archive</a>
+                </li>
+<li class="nav-item">
+<a href="../../categories/index.html" class="nav-link">Tags</a>
+                </li>
+<li class="nav-item">
+<a href="../../rss.xml" class="nav-link">RSS feed</a>
+
+                
+            </li>
+</ul>
+</div>
+<!-- /.navbar-collapse -->
+</nav>
+</div>
+
+<div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        
+        
+        
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">First Impressions And Overcoming Compilation Errors</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard p-author h-card"><span class="byline-name fn p-name" itemprop="author">
+                    Ian Henriksen
+            </span></p>
+            <p class="dateline">
+            <a href="." rel="bookmark">
+            <time class="published dt-published" datetime="2015-05-21T22:23:11-06:00" itemprop="datePublished" title="2015-05-21 22:23">2015-05-21 22:23</time></a>
+            </p>
+                <p class="commentline">
+
+            
+        </p>
+<p class="sourceline"><a href="index.md" class="sourcelink">Source</a></p>
+
+        </div>
+        
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <div>
+<p>Most of the past month was spent in a mad dash to finish my master's thesis.
+Who knew that writing 100 pages of original research in math could take so long?
+Either way, I'm finished and quite pleased with the result.
+My thesis is written and I have been able to, mostly, move on to other endeavors, like starting the work on my GSOC project, the Cython API for DyND (see the <a href="https://www.google-melange.com/gsoc/project/details/google/gsoc2015/iandh/5707702298738688">brief description</a> and <a href="https://github.com/numfocus/gsoc/blob/master/2015/proposals/ian-henriksen.md">full proposal</a>).</p>
+<p>I've been able to start familiarizing myself with the package a little more.
+My background is primarily in using NumPy and Cython, but it has been really nice to be able to use a NumPy-like data structure in C++ without having to use the Python C API to do everything.
+Stay tuned for a few nice snippets of code over the next few days.</p>
+<p>Overall, I've been impressed by the amount of functionality that is already present.
+A few things like allowing the use of an ellipsis in indexing or providing routines for basic linear algebra operations have yet to be implemented, but, for the most part, the library is easy to use and provides a great deal of useful functionality at both the C++ and Python levels.</p>
+<p>Before beginning detailed work on my project, I was first faced with the task of getting everything working on my main development machine.
+For a variety of reasons, it uses windows and needs to stay that way.
+Undaunted, I ventured forth, and attempted to build libdynd and its corresponding Python bindings from source with my compiler of choice, MinGW-w64.</p>
+<p>MinGW-w64 is a relatively new version of MinGW that targets 64 bit windows.
+It is not as commonly used as MSVC, or gcc, so it is normal to have to fix a few compile errors when compiling large amounts of C/C++ code.
+Python's support for MinGW is shaky as well, but usually things come together nicely with a little effort.</p>
+<p>After several long and ugly battles with a variety of compiler errors, I was able to get it all working, though there are still some test failures that still need to be revisited.
+The DyND source proved to be fairly easy to work with.
+The most difficult errors I came up against came from conflicts between the environment provided by the compiler and some of the type definitions in the Python headers.
+I'll document some of the useful information I picked up here.</p>
+<p>For those that aren't familiar with it, the C preprocessor is an essential part of writing platform independent code.
+Among other things, it lets you write specialized sections of code for pieces that are specific to a given operating system, compiler, or architecture.
+For example, to write a section of code that applies only to Windows, you would write something like</p>
+<pre class="code literal-block"><span class="c1">// If the environment variable indicating that you're compiling on Windows is defined</span>
+<span class="cp">#ifdef _WIN32</span>
+  <span class="c1">// Platform-specific code goes here.</span>
+<span class="cp">#endif</span>
+</pre>
+
+<p>Similarly, if you want to differentiate between compilers,</p>
+<pre class="code literal-block"><span class="cp">#ifdef _MSC_VER</span>
+  <span class="c1">// Code for MSVC compiler here.</span>
+<span class="cp">#elseif __GNUCC__</span>
+  <span class="c1">// Code for gcc/g++ here.</span>
+  <span class="c1">// Compilers that implement a GCC-like environment</span>
+  <span class="c1">// (e.g. ICC on Linux, or Clang on any platform)</span>
+  <span class="c1">// will also use this case.</span>
+<span class="cp">#else</span>
+  <span class="c1">// Code for all other compilers.</span>
+<span class="cp">#endif</span>
+</pre>
+
+<p>Most of the work I did to get everything running involved modifying blocks that look like this to get the right combination.
+Frequently, code is defined to do one thing on windows (with the assumption that only MSVC will be used) and another on Linux, even though, for MinGW, many of the Linux configurations are needed for the compiler.
+In the past, I've found myself continually searching for what the right ways to detect a given compiler, operating system, or architecture, but it turns out there is a fairly complete <a href="http://sourceforge.net/p/predef/wiki/Home/">list</a> where the variables indicating most common compilers and operating systems are shown.</p>
+<p>The build system CMake also provides ways of detecting things like that.
+A few useful examples:</p>
+<pre class="code literal-block"><span class="nb">if</span><span class="p">(</span><span class="s">WIN32</span><span class="p">)</span>
+    <span class="c"># You're compiling for Windows</span>
+<span class="nb">endif</span><span class="p">()</span>
+<span class="nb">if</span><span class="p">(</span><span class="s2">"${CMAKE_SIZEOF_VOID_P}"</span> <span class="s">EQUAL</span> <span class="s2">"8"</span><span class="p">)</span>
+    <span class="c"># You're compiling for a 64-bit machine.</span>
+<span class="nb">endif</span><span class="p">()</span>
+<span class="nb">if</span><span class="p">(</span><span class="s2">"${CMAKE_CXX_COMPILER_ID}"</span> <span class="s">STREQUAL</span> <span class="s2">"GNU"</span><span class="p">)</span>
+    <span class="c"># You're compiling for gcc.</span>
+<span class="nb">endif</span><span class="p">()</span>
+<span class="nb">if</span><span class="p">(</span><span class="s2">"${CMAKE_CXX_COMPILER_ID}"</span> <span class="s">STREQUAL</span> <span class="s2">"MSVC"</span><span class="p">)</span>
+    <span class="c"># You're compiling for MSVC.</span>
+<span class="nb">endif</span><span class="p">()</span>
+</pre>
+
+<p>Now, on to some of the tricker bugs.
+Hopefully including them here can help others resolve similar errors later on.</p>
+<p>It is a less commonly known fact that the order of compiler flags matters if you are linking against different libraries.
+(An aside, for those that are new to the command line flags for gcc, there is a nice introduction <a href="http://www.rapidtables.com/code/linux/gcc.htm">here</a>)
+As it turns out, the order of the flags for gcc also matters in some less than intuitive cases.
+After compiling libdynd, in order to compile a basic working example I had to do <code>g++ -std=c++11 -fPIC declare_array.cpp -ldynd</code> rather than <code>g++ -std=c++11 -ldynd -fPIC declare_array.cpp</code>.
+Running the latter would give a series of linker errors like</p>
+<pre class="code literal-block"><span class="err">undefined reference to 'dynd::detail::memory_block_free(dynd::memory_block_data*)'</span>
+</pre>
+
+<p><code>clang++</code> accepted both orderings of the flags without complaint.</p>
+<p>I also ran into <a href="http://bugs.python.org/issue11566">this bug in Python</a> where there is an unfortunate name collision between a preprocessor macro defined in Python and a function in the c++11 standard library.
+The name collision results in the unusual error</p>
+<pre class="code literal-block"><span class="c">error: '::hypot' has not been declared</span>
+</pre>
+
+<p>coming from the c++11 standard library headers.
+It appears that a <a href="http://stackoverflow.com/a/12124708/1935144">generally known solution</a> is to include the standard library math header before <code>Python.h</code>.
+This wasn't a particularly favorable resolution to the issue since the Python headers are supposed to come first, so I opted to define the symbol <code>_hypot</code> back again to be <code>hypot</code> via a command line argument, i.e. adding the flag <code>-D_hypot=hypot</code>.
+It worked like a charm.</p>
+<p>The last batch of errors came from my forgetting to define the macro <code>MS_WIN64</code> on the command line when working with the Python headers.
+That macro is used internally to indicate that a Python extension module is being compiled for a 64 bit Python installation on Windows.
+In this case, forgetting to include that flag resulted in the error</p>
+<pre class="code literal-block"><span class="err">undefined reference to '__imp_Py_InitModule4'</span>
+</pre>
+
+<p>at link time.</p>
+<p>In trying to fix the various errors from not defining <code>MS_WIN64</code>, I also came across errors where <code>np_intp</code> (a typedef of <code>Py_intptr_t</code>) was not the correct size, resulting in the error</p>
+<pre class="code literal-block"><span class="n">error</span><span class="o">:</span> <span class="n">cannot</span> <span class="n">convert</span> <span class="s1">'long long int*'</span> <span class="n">to</span> <span class="s1">'npy_intp* {aka int*}'</span> <span class="k">in</span> <span class="n">argument</span> <span class="n">passing</span>
+</pre>
+
+<p>The fundamental problem is that the logic in the Python headers fails to detect the proper size of a pointer without some sort of extra compile switch.
+Passing the command-line argument <code>-DMS_WIN64</code> to the compiler when compiling Python extensions was sufficient to address the issue.</p>
+<p>With most of the compilation-related issues behind me, I am now continuing my work in putting together several simple examples of how DyND can be used to perform NumPy-like operations at the C++ level.
+I'll be posting a few of them soon.</p>
+<h4>Update (6/8/2015)</h4>
+<p>In fixing a few more compilation errors, I found another <a href="http://nadeausoftware.com/articles/2012/01/c_c_tip_how_use_compiler_predefined_macros_detect_operating_system">useful table</a> of C preprocessor macros that can be used to identify a given operating system.
+Among other things, it mentions that any BSD operating system can be detected using something like</p>
+<pre class="code literal-block"><span class="cp">#ifdef __unix__</span>
+<span class="cp">#include</span> <span class="cpf">&lt;sys/param.h&gt;</span><span class="cp"></span>
+<span class="cp">#ifdef BSD</span>
+<span class="c1">// BSD stuff</span>
+<span class="cp">#endif</span>
+<span class="cp">#endif</span>
+</pre>
+
+<p>The <a href="https://gcc.gnu.org/onlinedocs/cpp/Standard-Predefined-Macros.html#Standard-Predefined-Macros">table in the GCC manual</a> also lists which preprocessor macros are required for a compiler implementing the relevant language standards.</p>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="next">
+                <a href="../basic-examples/" rel="next" title="Basic Examples">Next post</a>
+            </li>
+        </ul></nav></aside><section class="comments hidden-print"><h2>Comments</h2>
+        
+
+        </section></article><!--End of body content--><footer id="footer">
+            Contents © 2020         <a href="mailto:insertinterestingnamehere@gmail.com">Ian Henriksen</a> - Powered by         <a href="http://getnikola.com" rel="nofollow">Nikola</a>         
+            
+            
+        </footer>
+</div>
+</div>
+
+
+        <script src="../../assets/js/all-nocdn.js"></script><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-63913896-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

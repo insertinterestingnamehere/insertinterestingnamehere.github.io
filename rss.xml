@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>Ian's Blog</title><link>http://insertinterestingnamehere.github.io/</link><description>My comments on math, numerical computing, and the tools used for computational science.</description><atom:link type="application/rss+xml" rel="self" href="http://insertinterestingnamehere.github.io/rss.xml"></atom:link><language>en</language><lastBuildDate>Thu, 16 Mar 2017 15:53:47 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>DyND Callables: Speed and Flexibility</title><link>http://insertinterestingnamehere.github.io/posts/dynd-callables-speed-and-flexibility.html</link><dc:creator>Ian Henriksen</dc:creator><description>&lt;div&gt;&lt;p&gt;(This is a post I wrote for the &lt;a href="https://www.continuum.io/blog/developer-blog"&gt;Continuum Developer Blog&lt;/a&gt;. You can see the original &lt;a href="https://www.continuum.io/blog/developer-blog/dynd-callables-speed-and-flexibility"&gt;here&lt;/a&gt;)&lt;/p&gt;
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Ian's Blog</title><link>http://insertinterestingnamehere.github.io/</link><description>My comments on math, numerical computing, and the tools used for computational science.</description><atom:link href="http://insertinterestingnamehere.github.io/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><lastBuildDate>Mon, 14 Sep 2020 03:28:46 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>DyND Callables: Speed and Flexibility</title><link>http://insertinterestingnamehere.github.io/posts/dynd-callables-speed-and-flexibility/</link><dc:creator>Ian Henriksen</dc:creator><description>&lt;div&gt;&lt;p&gt;(This is a post I wrote for the &lt;a href="https://www.continuum.io/blog/developer-blog"&gt;Continuum Developer Blog&lt;/a&gt;. You can see the original &lt;a href="https://www.continuum.io/blog/developer-blog/dynd-callables-speed-and-flexibility"&gt;here&lt;/a&gt;)&lt;/p&gt;
 &lt;h3&gt;Introduction&lt;/h3&gt;
 &lt;p&gt;We've been working hard to improve DyND in a wide variety of ways over the past few months.
 While there is still a lot of churn in our codebase, now is a good time to show a few basic examples of the great functionality that's already there.
@@ -17,7 +17,7 @@ At the very lowest level, a callable can access all of the data, type-defined me
 This makes it possible to use callables for functionality like multiple dispatch, views based on stride manipulation, reductions, and broadcasting.
 The simplest case is using a callable to wrap a non-broadcasting non-dispatched function call so that it can be used on scalar arrays.&lt;/p&gt;
 &lt;p&gt;Here's an example of how to do that:&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
 &lt;span class="c1"&gt;// Main header for DyND arrays:&lt;/span&gt;
 &lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;dynd/array.hpp&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
 &lt;span class="c1"&gt;// Main callable object header:&lt;/span&gt;
@@ -50,7 +50,6 @@ The simplest case is using a callable to wrap a non-broadcasting non-dispatched 
 &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/pre&gt;
 
-
 &lt;p&gt;The constructor for &lt;code&gt;dynd::nd::callable&lt;/code&gt; does most of the work here.
 Using some interesting templating mechanisms internally, it is able to infer the argument types and return type for the function, select the corresponding DyND types, and form a DyND type that represents an analogous function call.
 The result is a callable object that wraps a pointer to the function &lt;code&gt;f&lt;/code&gt; and knows all of the type information about the pointer it is wrapping.
@@ -73,7 +72,7 @@ DyND's multiple dispatch semantics are currently under revision, so I'll just sh
 &lt;p&gt;DyND provides broadcasting through the function &lt;code&gt;dynd::nd::functional::elwise&lt;/code&gt;.
 It follows broadcasting semantics similar to those followed by NumPy's generalized universal functions—though it is, in many ways, more general.
 The following example shows how to use &lt;code&gt;elwise&lt;/code&gt; to create a callable that follows broadcasting semantics:&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;// Include &amp;lt;cmath&amp;gt; to get std::exp.&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="c1"&gt;// Include &amp;lt;cmath&amp;gt; to get std::exp.&lt;/span&gt;
 &lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;cmath&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
 &lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
 
@@ -117,16 +116,14 @@ The following example shows how to use &lt;code&gt;elwise&lt;/code&gt; to create
 &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/pre&gt;
 
-
 &lt;p&gt;A similar function can be constructed in Python using DyND's Python bindings and Python 3's function type annotations.
 If Numba is installed, it is used to get JIT-compiled code that has performance relatively close to the speed of the code generated by the C++ compiler.&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;dynd&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ndt&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;dynd&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ndt&lt;/span&gt;
 
-&lt;span class="nd"&gt;@nd.functional.elwise&lt;/span&gt;
+&lt;span class="nd"&gt;@nd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;functional&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;elwise&lt;/span&gt;
 &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;myfunc&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ndt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ndt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;ndt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
     &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;
-
 
 &lt;h3&gt;Reductions&lt;/h3&gt;
 &lt;p&gt;Reductions are formed from functions that take two inputs and produce a single output.
@@ -134,7 +131,7 @@ Examples of reductions include taking the sum, max, min, and product of the item
 Here we'll work with a reduction that takes the maximum of the absolute values of the items in an array.
 In DyND this can be implemented by using &lt;code&gt;nd::functional::reduction&lt;/code&gt; on a callable that takes two floating point inputs and returns the maximum of their absolute values.
 Here's an example:&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;// Include &amp;lt;algorithm&amp;gt; to get std::max.&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="c1"&gt;// Include &amp;lt;algorithm&amp;gt; to get std::max.&lt;/span&gt;
 &lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;algorithm&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
 &lt;span class="c1"&gt;// Include &amp;lt;cmath&amp;gt; to get std::abs.&lt;/span&gt;
 &lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;cmath&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
@@ -165,15 +162,13 @@ Here's an example:&lt;/p&gt;
 &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/pre&gt;
 
-
 &lt;p&gt;Again, in Python, it is relatively easy to create a similar callable.&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;dynd&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ndt&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;dynd&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ndt&lt;/span&gt;
 
-&lt;span class="nd"&gt;@nd.functional.reduction&lt;/span&gt;
+&lt;span class="nd"&gt;@nd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;functional&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;reduction&lt;/span&gt;
 &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;inf_norm&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ndt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ndt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;ndt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
     &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nb"&gt;max&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;abs&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="nb"&gt;abs&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
 &lt;/pre&gt;
-
 
 &lt;p&gt;The type for the reduction callable &lt;code&gt;inf_norm&lt;/code&gt; is a bit longer.
 It is &lt;code&gt;(Dims... * float64, axes: ?Fixed * int32, identity: ?float64, keepdims: ?bool) -&amp;gt; Dims... * float64&lt;/code&gt;.
@@ -188,7 +183,7 @@ Using DyND in Cython merits a discussion of its own, so I'll only include a mini
 The import structure and function names here are very likely to change.&lt;/p&gt;
 &lt;p&gt;The first thing needed is a header that creates the desired callable.
 Since this will only be included once in a single Cython based module, additional guards to make sure the header is only applied once are not needed.&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;// inf_norm_reduction.hpp&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="c1"&gt;// inf_norm_reduction.hpp&lt;/span&gt;
 &lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;algorithm&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
 &lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;cmath&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
 
@@ -201,12 +196,11 @@ Since this will only be included once in a single Cython based module, additiona
         &lt;span class="p"&gt;[](&lt;/span&gt;&lt;span class="kt"&gt;double&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;double&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;max&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;abs&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;abs&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;));}));&lt;/span&gt;
 &lt;/pre&gt;
 
-
 &lt;p&gt;The callable can now be exposed to Python through Cython.
 Some work still needs to be done in DyND's Python bindings to simplify the system-specific configuration for linking extensions like this to the DyND libraries.
 For simplicity, I'll just show the commented Cython distutils directives that can be used to build this file on 64 bit Windows with a libdynd built and installed from source in the default location.
 Similar configurations can be put together for other systems.&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c"&gt;# py_inf_norm.pyx&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="c"&gt;# py_inf_norm.pyx&lt;/span&gt;
 &lt;span class="c"&gt;# distutils: include_dirs = "c:/Program Files/libdynd/include"&lt;/span&gt;
 &lt;span class="c"&gt;# distutils: library_dirs = "c:/Program Files/libdynd/lib"&lt;/span&gt;
 &lt;span class="c"&gt;# distutils: libraries = ["libdynd", "libdyndt"]&lt;/span&gt;
@@ -224,19 +218,17 @@ Similar configurations can be put together for other systems.&lt;/p&gt;
 &lt;span class="n"&gt;py_inf_norm&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;dynd_nd_callable_from_cpp&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;inf_norm&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;
 
-
 &lt;p&gt;To build the extension I used the following setup file and ran it with the command &lt;code&gt;python setup.py build_ext --inplace&lt;/code&gt;.&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# setup.py&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="c1"&gt;# setup.py&lt;/span&gt;
 &lt;span class="c1"&gt;# This is a fairly standard setup script for a minimal Cython module.&lt;/span&gt;
 &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;distutils.core&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;setup&lt;/span&gt;
 &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;Cython.Build&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;cythonize&lt;/span&gt;
 &lt;span class="n"&gt;setup&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ext_modules&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;cythonize&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"py_inf_norm.pyx"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;language&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;'c++'&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
 &lt;/pre&gt;
 
-
 &lt;h3&gt;A Short Benchmark&lt;/h3&gt;
 &lt;p&gt;&lt;code&gt;elwise&lt;/code&gt; and &lt;code&gt;reduction&lt;/code&gt; are not heavily optimized yet, but, using IPython's &lt;code&gt;timeit&lt;/code&gt; magic, it's clear that DyND is already doing well:&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;numpy&lt;/span&gt; &lt;span class="kn"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;np&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;numpy&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;np&lt;/span&gt;
 
 &lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;py_inf_norm&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;py_inf_norm&lt;/span&gt;
 
@@ -249,10 +241,9 @@ Similar configurations can be put together for other systems.&lt;/p&gt;
 &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;best&lt;/span&gt; &lt;span class="n"&gt;of&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;393&lt;/span&gt; &lt;span class="n"&gt;ms&lt;/span&gt; &lt;span class="n"&gt;per&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt;
 &lt;/pre&gt;
 
-
 &lt;p&gt;These are just a few examples of the myriad of things you can do with DyND's callables.
-For more information take a look at our &lt;a href="https://github.com/libdynd/libdynd"&gt;github repo&lt;/a&gt; as well as &lt;a href="http://insertinterestingnamehere.github.io/posts/libdynd.org"&gt;libdynd.org&lt;/a&gt;.
-We'll be adding a lot more functionality, documentation, and examples in the coming months.&lt;/p&gt;&lt;/div&gt;</description><guid>http://insertinterestingnamehere.github.io/posts/dynd-callables-speed-and-flexibility.html</guid><pubDate>Tue, 15 Mar 2016 19:22:33 GMT</pubDate></item><item><title>GSOC Concluding Thoughts</title><link>http://insertinterestingnamehere.github.io/posts/gsoc-concluding-thoughts.html</link><dc:creator>Ian Henriksen</dc:creator><description>&lt;div&gt;&lt;p&gt;After many long weeks of hunting bugs and reorganizing code, my GSOC has come to an end.
+For more information take a look at our &lt;a href="https://github.com/libdynd/libdynd"&gt;github repo&lt;/a&gt; as well as &lt;a href="http://insertinterestingnamehere.github.io/posts/dynd-callables-speed-and-flexibility/libdynd.org"&gt;libdynd.org&lt;/a&gt;.
+We'll be adding a lot more functionality, documentation, and examples in the coming months.&lt;/p&gt;&lt;/div&gt;</description><guid>http://insertinterestingnamehere.github.io/posts/dynd-callables-speed-and-flexibility/</guid><pubDate>Tue, 15 Mar 2016 19:22:33 GMT</pubDate></item><item><title>GSOC Concluding Thoughts</title><link>http://insertinterestingnamehere.github.io/posts/gsoc-concluding-thoughts/</link><dc:creator>Ian Henriksen</dc:creator><description>&lt;div&gt;&lt;p&gt;After many long weeks of hunting bugs and reorganizing code, my GSOC has come to an end.
 My project turned out significantly different than I had expected, but much of my work still proved to be very valuable.
 I originally envisioned being able to use many of DyND's features within Cython in a transparent way.
 Much of the work that I did was in fixing bugs and laying the groundwork for making things like that possible.
@@ -260,7 +251,7 @@ There are still several bugs to fix and features to add in Cython before that's 
 My bugfixes served to simplify some of the difficult problems that arise when wrapping and interfacing with nontrivial C++ code.
 My restructuring of the DyND Python bindings, as expected, made it much easier to transition between the C++-level DyND constructs and the Python classes used in its Python bindings.&lt;/p&gt;
 &lt;p&gt;Here's a minimum working example that works with the latest versions of libdynd and dynd-python (as of this post).&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;// myfunc.cpp&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="c1"&gt;// myfunc.cpp&lt;/span&gt;
 &lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;"dynd/func/callable.hpp"&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
 &lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;"dynd/func/apply.hpp"&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
 &lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;"dynd/func/elwise.hpp"&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
@@ -274,8 +265,7 @@ My restructuring of the DyND Python bindings, as expected, made it much easier t
 &lt;span class="n"&gt;dynd&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;callable&lt;/span&gt; &lt;span class="n"&gt;f_broadcast&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;dynd&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;functional&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;elwise&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dynd&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;nd&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;functional&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;apply&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
 &lt;/pre&gt;
 
-
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c"&gt;# custom_callable.pyx&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="c"&gt;# custom_callable.pyx&lt;/span&gt;
 &lt;span class="c"&gt;# distutils: extra_compile_args = -std=c++11&lt;/span&gt;
 &lt;span class="c"&gt;# distutils: libraries = dynd&lt;/span&gt;
 
@@ -298,17 +288,15 @@ My restructuring of the DyND Python bindings, as expected, made it much easier t
     &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="n"&gt;py_f&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;
 
-
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# setup.py&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="c1"&gt;# setup.py&lt;/span&gt;
 &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;distutils.core&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;setup&lt;/span&gt;
 &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;Cython.Build&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;cythonize&lt;/span&gt;
 &lt;span class="n"&gt;setup&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ext_modules&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;cythonize&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"*.pyx"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;language&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;'c++'&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
 &lt;/pre&gt;
 
-
 &lt;p&gt;As you can see, it is now very easy for external modules to transition smoothly between using DyND in C++ and providing Python-level functionality.
 There's still a lot to be done, but I find the fact that this is now such a simple process really remarkable.
-This example uses the strengths of both Cython and Dynd to provide useful and significant functionality, and I'm thrilled it is finally working.&lt;/p&gt;&lt;/div&gt;</description><guid>http://insertinterestingnamehere.github.io/posts/gsoc-concluding-thoughts.html</guid><pubDate>Sun, 23 Aug 2015 04:30:52 GMT</pubDate></item><item><title>Cython Collaboration</title><link>http://insertinterestingnamehere.github.io/posts/cython-collaboration.html</link><dc:creator>Ian Henriksen</dc:creator><description>&lt;div&gt;&lt;p&gt;I've spent the majority of these last few weeks working on adding new features to Cython.
+This example uses the strengths of both Cython and Dynd to provide useful and significant functionality, and I'm thrilled it is finally working.&lt;/p&gt;&lt;/div&gt;</description><guid>http://insertinterestingnamehere.github.io/posts/gsoc-concluding-thoughts/</guid><pubDate>Sun, 23 Aug 2015 04:30:52 GMT</pubDate></item><item><title>Cython Collaboration</title><link>http://insertinterestingnamehere.github.io/posts/cython-collaboration/</link><dc:creator>Ian Henriksen</dc:creator><description>&lt;div&gt;&lt;p&gt;I've spent the majority of these last few weeks working on adding new features to Cython.
 I just recently finished my work there, though the pull request involving exception handling for overloaded operators is still waiting to be merged.
 Overloading the assignment operator should now work in all cases for C++ classes.
 Once the exception handling pull request is merged, translating C++ exceptions into Python exceptions should also work perfectly well.
@@ -332,7 +320,7 @@ In theory, good removal of temporaries and good branch prediction should make it
 Either way, that was the only way to properly conform to the existing API for overloaded operators that is already documented and used extensively in Cython.
 At some future point it would be nice to add a way to let users consolidate different try-except blocks, but that is well outside the scope of my current project.&lt;/p&gt;
 &lt;p&gt;Thanks to the exception handling logic that I've added, things like the following raise an appropriate Python exception now rather than crash the Python interpreter:&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;cdef&lt;/span&gt; &lt;span class="kr"&gt;extern&lt;/span&gt; &lt;span class="k"&gt;from&lt;/span&gt; &lt;span class="s"&gt;"myheader.hpp"&lt;/span&gt; &lt;span class="k"&gt;nogil&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="k"&gt;cdef&lt;/span&gt; &lt;span class="kr"&gt;extern&lt;/span&gt; &lt;span class="k"&gt;from&lt;/span&gt; &lt;span class="s"&gt;"myheader.hpp"&lt;/span&gt; &lt;span class="k"&gt;nogil&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
     &lt;span class="n"&gt;cppclass&lt;/span&gt; &lt;span class="n"&gt;thing&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
         &lt;span class="n"&gt;thing&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
         &lt;span class="n"&gt;thing&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
@@ -346,7 +334,6 @@ At some future point it would be nice to add a way to let users consolidate diff
     &lt;span class="c"&gt;# Now do an operation that throws a C++ exception.&lt;/span&gt;
     &lt;span class="n"&gt;c&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;
 &lt;/pre&gt;
-
 
 &lt;p&gt;One of the key features I was hoping to work through with the Cython developers was finding an appropriate API for assignment to a multidimensional index.
 In C++ this is easily implemented as an assignment to an lvalue reference resulting from an overloaded or variadic function call.
@@ -375,7 +362,7 @@ I didn't get the time to add that feature, but at least the design ideas are the
 Currently, due to some incomplete type checking, variadic templated functions are already usable in Cython, but this is really a bug and not a feature.
 (EDIT: This is actually just a creative use of the fact that C variadic functions accept pretty much anything and is most certainly not a bug.)
 For example:&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;// variadic_print.hpp&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="c1"&gt;// variadic_print.hpp&lt;/span&gt;
 &lt;span class="cp"&gt;#pragma once&lt;/span&gt;
 &lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
 
@@ -391,8 +378,7 @@ For example:&lt;/p&gt;
 &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/pre&gt;
 
-
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c"&gt;# cpp_print.pyx&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="c"&gt;# cpp_print.pyx&lt;/span&gt;
 &lt;span class="c"&gt;# The extra compile arguments here assume gcc or clang is used.&lt;/span&gt;
 &lt;span class="c"&gt;# distutils: extra_compile_args = ['-std=c++11']&lt;/span&gt;
 
@@ -410,7 +396,6 @@ For example:&lt;/p&gt;
         &lt;span class="n"&gt;string&lt;/span&gt; &lt;span class="n"&gt;thing5&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;"5"&lt;/span&gt;
     &lt;span class="n"&gt;cpp_print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;thing1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;thing2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;thing3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;thing4&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;thing5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;
-
 
 &lt;p&gt;This definitely isn't a feature though.
 It's just a cleverly exploited bug that hasn't been fixed yet and is certainly not usable in anything more than entertaining examples.
@@ -433,7 +418,7 @@ I've also spent some time working on some minimal examples of using the Cython d
 Thus far the builds are running noticeably faster.
 These changes should be a great help to all of us in the future as we continue to develop both packages.&lt;/p&gt;
 &lt;p&gt;Over these last few weeks I expect to spend most of my time making it as easy as possible to use as much of libdynd as possible within Cython.
-The infrastructure is already in place for most of the core pieces that need to be taken care of, so I'm feeling optimistic.&lt;/p&gt;&lt;/div&gt;</description><guid>http://insertinterestingnamehere.github.io/posts/cython-collaboration.html</guid><pubDate>Wed, 05 Aug 2015 21:55:07 GMT</pubDate></item><item><title>Fixing Cython Bugs</title><link>http://insertinterestingnamehere.github.io/posts/fixing-cython-bugs.html</link><dc:creator>Ian Henriksen</dc:creator><description>&lt;div&gt;&lt;p&gt;Last week I went to the SciPy conference.
+The infrastructure is already in place for most of the core pieces that need to be taken care of, so I'm feeling optimistic.&lt;/p&gt;&lt;/div&gt;</description><guid>http://insertinterestingnamehere.github.io/posts/cython-collaboration/</guid><pubDate>Wed, 05 Aug 2015 21:55:07 GMT</pubDate></item><item><title>Fixing Cython Bugs</title><link>http://insertinterestingnamehere.github.io/posts/fixing-cython-bugs/</link><dc:creator>Ian Henriksen</dc:creator><description>&lt;div&gt;&lt;p&gt;Last week I went to the SciPy conference.
 It was great.
 I got to meet many of the major contributors to open source, including one of my mentors, Mark Wiebe.
 I also got to give a &lt;a href="https://www.youtube.com/watch?v=R4yB-8tB0J0"&gt;talk&lt;/a&gt; about some of my previous work on SciPy and see &lt;a href="https://www.youtube.com/watch?v=Le1GdRFt3E8"&gt;my wife's talk&lt;/a&gt; about our new applied math curriculum here at BYU.
@@ -462,7 +447,7 @@ The primary reasoning as far as I can tell is that allowing that would be decide
 My personal preference is very strongly toward allowing the C++ syntax when working with C++ objects, but we're still trying to settle on a reasonable solution.&lt;/p&gt;
 &lt;p&gt;I've also resurrected an existing patch to allow using an overloaded call operator for stack-allocated objects and put in some initial code toward allowing users to declare and use an overloaded &lt;code&gt;operator=&lt;/code&gt; for a C++ class.
 There will be more patches coming soon on that.&lt;/p&gt;
-&lt;p&gt;Once I've fixed a few more of these Cython bugs, I expect to be able to continue my work in refactoring DyND's Python bindings to make the transition between Python, Cython/DyND, and C++/DyND much smoother.&lt;/p&gt;&lt;/div&gt;</description><guid>http://insertinterestingnamehere.github.io/posts/fixing-cython-bugs.html</guid><pubDate>Mon, 13 Jul 2015 19:26:32 GMT</pubDate></item><item><title>Structure Plans and More Examples</title><link>http://insertinterestingnamehere.github.io/posts/structure-plans-and-more-examples.html</link><dc:creator>Ian Henriksen</dc:creator><description>&lt;div&gt;&lt;p&gt;Despite a few setbacks, these past two weeks have been ones of progress.
+&lt;p&gt;Once I've fixed a few more of these Cython bugs, I expect to be able to continue my work in refactoring DyND's Python bindings to make the transition between Python, Cython/DyND, and C++/DyND much smoother.&lt;/p&gt;&lt;/div&gt;</description><guid>http://insertinterestingnamehere.github.io/posts/fixing-cython-bugs/</guid><pubDate>Mon, 13 Jul 2015 19:26:32 GMT</pubDate></item><item><title>Structure Plans and More Examples</title><link>http://insertinterestingnamehere.github.io/posts/structure-plans-and-more-examples/</link><dc:creator>Ian Henriksen</dc:creator><description>&lt;div&gt;&lt;p&gt;Despite a few setbacks, these past two weeks have been ones of progress.
 I was able to work with my mentors, Mark and Irwin, to come up with a plan for how to restructure the C++ namespaces in dynd-python.
 We opted to separate the namespaces for the Python interoperability functions and the namespaces for the primary DyND C++ functionality.
 This will make it so that Cython wrapper types for specific C++ types can have the same name without causing any sort of naming conflict.
@@ -488,7 +473,7 @@ I expect that we'll be able to get those resolved and I'll be able to post a wor
 Arrfuncs operate on DyND arrays the same way that gufuncs operate on NumPy arrays.
 I found that arrfuncs are surprisingly easy to both construct and use.
 Here's a simple program that shows some arrfuncs in action:&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
 &lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;dynd/array.hpp&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
 &lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;dynd/func/arrfunc.hpp&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
 &lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;dynd/func/apply.hpp&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
@@ -546,14 +531,12 @@ Here's a simple program that shows some arrfuncs in action:&lt;/p&gt;
 &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/pre&gt;
 
-
 &lt;p&gt;I compiled this C++ file on Windows with a recent MinGW-w64 g++ using the command&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;g++ -O3 -I&lt;span class="s2"&gt;"c:/Program Files (x86)/libdynd/include"&lt;/span&gt; -std&lt;span class="o"&gt;=&lt;/span&gt;c++11 ufunc.cpp -L&lt;span class="s2"&gt;"c:/Program Files (x86)/libdynd/lib/static"&lt;/span&gt; -ldynd -o ufunc.exe
+&lt;pre class="code literal-block"&gt;g++ -O3 -I&lt;span class="s2"&gt;"c:/Program Files (x86)/libdynd/include"&lt;/span&gt; -std&lt;span class="o"&gt;=&lt;/span&gt;c++11 ufunc.cpp -L&lt;span class="s2"&gt;"c:/Program Files (x86)/libdynd/lib/static"&lt;/span&gt; -ldynd -o ufunc.exe
 &lt;/pre&gt;
 
-
 &lt;p&gt;Again, I was very impressed with how naturally I was able to create a C++ arrfunc that followed all the expected broadcasting rules.
-In another few weeks I expect to be able to do this sort of thing just as naturally in Cython.&lt;/p&gt;&lt;/div&gt;</description><guid>http://insertinterestingnamehere.github.io/posts/structure-plans-and-more-examples.html</guid><pubDate>Tue, 23 Jun 2015 21:15:07 GMT</pubDate></item><item><title>Basic Examples</title><link>http://insertinterestingnamehere.github.io/posts/basic-examples.html</link><dc:creator>Ian Henriksen</dc:creator><description>&lt;div&gt;&lt;p&gt;The past two weeks have been an adventure.
+In another few weeks I expect to be able to do this sort of thing just as naturally in Cython.&lt;/p&gt;&lt;/div&gt;</description><guid>http://insertinterestingnamehere.github.io/posts/structure-plans-and-more-examples/</guid><pubDate>Tue, 23 Jun 2015 21:15:07 GMT</pubDate></item><item><title>Basic Examples</title><link>http://insertinterestingnamehere.github.io/posts/basic-examples/</link><dc:creator>Ian Henriksen</dc:creator><description>&lt;div&gt;&lt;p&gt;The past two weeks have been an adventure.
 I've spent a great deal of time working to find a reasonable way to refactor the DyND Python bindings in a way that works well for exporting all the existing Python/C++ compatibility functions at both the Cython and C++ level.
 After some discussion with my mentors, Mark and Irwin, I was able to get to what seems to be a workable model.
 I'm in the process of doing all the needed refactoring to put those changes into place.
@@ -576,33 +559,31 @@ It is used to specify ranges of indices over which to slice an array.
 Since multiple arguments are not allowed for the indexing operator in C++, the call operator is used for array slicing.&lt;/p&gt;
 &lt;p&gt;For compiling these examples on Windows, I used gfortran and a recent development version (3.7.0 dev) of clang compiled with mingw-w64.
 The exact compiler calls replacing "(algorithm)" with the name of each particular algorithm were&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;clang++ -fPIC -O3 -I&lt;span class="s2"&gt;"c:/Program Files (x86)/libdynd/include"&lt;/span&gt; -std&lt;span class="o"&gt;=&lt;/span&gt;c++11 &lt;span class="o"&gt;(&lt;/span&gt;algorithm&lt;span class="o"&gt;)&lt;/span&gt;.cpp -L&lt;span class="s2"&gt;"c:/Program Files (x86)/libdynd/lib/static"&lt;/span&gt; -ldynd -o &lt;span class="o"&gt;(&lt;/span&gt;algorithm&lt;span class="o"&gt;)&lt;/span&gt;.exe
+&lt;pre class="code literal-block"&gt;clang++ -fPIC -O3 -I&lt;span class="s2"&gt;"c:/Program Files (x86)/libdynd/include"&lt;/span&gt; -std&lt;span class="o"&gt;=&lt;/span&gt;c++11 &lt;span class="o"&gt;(&lt;/span&gt;algorithm&lt;span class="o"&gt;)&lt;/span&gt;.cpp -L&lt;span class="s2"&gt;"c:/Program Files (x86)/libdynd/lib/static"&lt;/span&gt; -ldynd -o &lt;span class="o"&gt;(&lt;/span&gt;algorithm&lt;span class="o"&gt;)&lt;/span&gt;.exe
 gfortran -fPIC -O3 &lt;span class="o"&gt;(&lt;/span&gt;algorithm&lt;span class="o"&gt;)&lt;/span&gt;.f90 -o &lt;span class="o"&gt;(&lt;/span&gt;algorithm&lt;span class="o"&gt;)&lt;/span&gt;_f.exe
 &lt;/pre&gt;
-
 
 &lt;p&gt;The corresponding compiler calls on BSD, Linux, or other Unix-based operating systems are similar with the &lt;code&gt;-I&lt;/code&gt; and &lt;code&gt;-L&lt;/code&gt; directories being modified (or omitted) according to the location of the DyND headers and library.
 The same set of flags should work with recent versions of clang++ and g++.&lt;/p&gt;
 &lt;h3&gt;Horner's Algorithm&lt;/h3&gt;
 &lt;p&gt;Horner's algorithm is the standard algorithm for evaluating a power basis polynomial at a parameter value, given the coefficients for the polynomial.
 Here the coefficients are assumed to be given in order from highest to lowest degree.&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# Python&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="c1"&gt;# Python&lt;/span&gt;
 &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;__future__&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;print_function&lt;/span&gt;
-&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;numpy&lt;/span&gt; &lt;span class="kn"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;np&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;numpy&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;np&lt;/span&gt;
 
 &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;horner&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
     &lt;span class="n"&gt;v&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
-    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;xrange&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]):&lt;/span&gt;
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;xrange&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]):&lt;/span&gt;
         &lt;span class="n"&gt;v&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
     &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;
 
 &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="vm"&gt;__name__&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;'__main__'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
     &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;array&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="s1"&gt;'d'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-    &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;horner&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;3333&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+    &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;horner&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;3333&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
 &lt;/pre&gt;
 
-
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;// C++&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="c1"&gt;// C++&lt;/span&gt;
 &lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
 &lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;dynd/array.hpp&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
 
@@ -620,8 +601,7 @@ Here the coefficients are assumed to be given in order from highest to lowest de
     &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;horner&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;.3333&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;}&lt;/span&gt;
 &lt;/pre&gt;
 
-
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c"&gt;! Fortran&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="c"&gt;! Fortran&lt;/span&gt;
 &lt;span class="k"&gt;module &lt;/span&gt;&lt;span class="n"&gt;hornermodule&lt;/span&gt;
 &lt;span class="k"&gt;implicit none&lt;/span&gt;
 &lt;span class="k"&gt;contains&lt;/span&gt;
@@ -647,26 +627,24 @@ Here the coefficients are assumed to be given in order from highest to lowest de
 &lt;span class="k"&gt;end program &lt;/span&gt;&lt;span class="n"&gt;main&lt;/span&gt;
 &lt;/pre&gt;
 
-
 &lt;h3&gt;Decasteljau's Algorithm&lt;/h3&gt;
 &lt;p&gt;Decasteljau's Algorithm is used to evaluate polynomials in Bernstein form.
 It is also often used to evaluate Bézier curves.&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# Python&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="c1"&gt;# Python&lt;/span&gt;
 &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;__future__&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;print_function&lt;/span&gt;
-&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;numpy&lt;/span&gt; &lt;span class="kn"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;np&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;numpy&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;np&lt;/span&gt;
 
 &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;decasteljau&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;xrange&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;xrange&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
         &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;[:&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;:]&lt;/span&gt;
     &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;
 
 &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="vm"&gt;__name__&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;'__main__'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
     &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;array&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="s1"&gt;'d'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-    &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;decasteljau&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;25&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+    &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;decasteljau&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;25&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
 &lt;/pre&gt;
 
-
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;// C++&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="c1"&gt;// C++&lt;/span&gt;
 &lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
 &lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;dynd/array.hpp&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
 
@@ -683,9 +661,8 @@ It is also often used to evaluate Bézier curves.&lt;/p&gt;
     &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;decasteljau&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;.25&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;}&lt;/span&gt;
 &lt;/pre&gt;
 
-
 &lt;p&gt;In the Fortran version of this algorithm, dynamic allocation within the function is needed.&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c"&gt;! Fortran&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="c"&gt;! Fortran&lt;/span&gt;
 &lt;span class="k"&gt;module &lt;/span&gt;&lt;span class="n"&gt;decasteljaumodule&lt;/span&gt;
 &lt;span class="k"&gt;implicit none&lt;/span&gt;
 &lt;span class="k"&gt;contains&lt;/span&gt;
@@ -712,28 +689,26 @@ It is also often used to evaluate Bézier curves.&lt;/p&gt;
 &lt;span class="k"&gt;end program &lt;/span&gt;&lt;span class="n"&gt;main&lt;/span&gt;
 &lt;/pre&gt;
 
-
 &lt;h3&gt;Clenshaw's Algorithm (Chebyshev Polynomials)&lt;/h3&gt;
 &lt;p&gt;Clenshaw's algorithm provides a simple recurrence for evaluating Chebyshev polynomials.
 There is a similar algorithm for evaluating Legendre polynomials, but we will not demonstrate it here.
 The code here is a simplified adaptation of the code &lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# Python&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="c1"&gt;# Python&lt;/span&gt;
 &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;__future__&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;print_function&lt;/span&gt;
-&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;numpy&lt;/span&gt; &lt;span class="kn"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;np&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;numpy&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;np&lt;/span&gt;
 
 &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;clenshaw&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
     &lt;span class="n"&gt;c0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;c1&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
-    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;xrange&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;xrange&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
         &lt;span class="n"&gt;c0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;c1&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;c1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;c0&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;c1&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;c0&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;c1&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;
 
 &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="vm"&gt;__name__&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;'__main__'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
     &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;array&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="s1"&gt;'d'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-    &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;clenshaw&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-.&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+    &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;clenshaw&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-.&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
 &lt;/pre&gt;
 
-
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;// C++&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="c1"&gt;// C++&lt;/span&gt;
 &lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
 &lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;dynd/array.hpp&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
 
@@ -753,8 +728,7 @@ The code here is a simplified adaptation of the code &lt;/p&gt;
     &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;clenshaw&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;.5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;}&lt;/span&gt;
 &lt;/pre&gt;
 
-
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c"&gt;! Fortran&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="c"&gt;! Fortran&lt;/span&gt;
 &lt;span class="k"&gt;module &lt;/span&gt;&lt;span class="n"&gt;clenshawmodule&lt;/span&gt;
 &lt;span class="k"&gt;implicit none&lt;/span&gt;
 &lt;span class="k"&gt;contains&lt;/span&gt;
@@ -781,7 +755,7 @@ The code here is a simplified adaptation of the code &lt;/p&gt;
     &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;clenshaw&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="n"&gt;D0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="k"&gt;end program &lt;/span&gt;&lt;span class="n"&gt;main&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;</description><guid>http://insertinterestingnamehere.github.io/posts/basic-examples.html</guid><pubDate>Mon, 08 Jun 2015 16:26:00 GMT</pubDate></item><item><title>First Impressions And Overcoming Compilation Errors</title><link>http://insertinterestingnamehere.github.io/posts/first-impressions-and-overcoming-compilation-errors.html</link><dc:creator>Ian Henriksen</dc:creator><description>&lt;div&gt;&lt;p&gt;Most of the past month was spent in a mad dash to finish my master's thesis.
+&lt;/pre&gt;&lt;/div&gt;</description><guid>http://insertinterestingnamehere.github.io/posts/basic-examples/</guid><pubDate>Mon, 08 Jun 2015 16:26:00 GMT</pubDate></item><item><title>First Impressions And Overcoming Compilation Errors</title><link>http://insertinterestingnamehere.github.io/posts/first-impressions-and-overcoming-compilation-errors/</link><dc:creator>Ian Henriksen</dc:creator><description>&lt;div&gt;&lt;p&gt;Most of the past month was spent in a mad dash to finish my master's thesis.
 Who knew that writing 100 pages of original research in math could take so long?
 Either way, I'm finished and quite pleased with the result.
 My thesis is written and I have been able to, mostly, move on to other endeavors, like starting the work on my GSOC project, the Cython API for DyND (see the &lt;a href="https://www.google-melange.com/gsoc/project/details/google/gsoc2015/iandh/5707702298738688"&gt;brief description&lt;/a&gt; and &lt;a href="https://github.com/numfocus/gsoc/blob/master/2015/proposals/ian-henriksen.md"&gt;full proposal&lt;/a&gt;).&lt;/p&gt;
@@ -803,15 +777,14 @@ I'll document some of the useful information I picked up here.&lt;/p&gt;
 &lt;p&gt;For those that aren't familiar with it, the C preprocessor is an essential part of writing platform independent code.
 Among other things, it lets you write specialized sections of code for pieces that are specific to a given operating system, compiler, or architecture.
 For example, to write a section of code that applies only to Windows, you would write something like&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;// If the environment variable indicating that you're compiling on Windows is defined&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="c1"&gt;// If the environment variable indicating that you're compiling on Windows is defined&lt;/span&gt;
 &lt;span class="cp"&gt;#ifdef _WIN32&lt;/span&gt;
   &lt;span class="c1"&gt;// Platform-specific code goes here.&lt;/span&gt;
 &lt;span class="cp"&gt;#endif&lt;/span&gt;
 &lt;/pre&gt;
 
-
 &lt;p&gt;Similarly, if you want to differentiate between compilers,&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;#ifdef _MSC_VER&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="cp"&gt;#ifdef _MSC_VER&lt;/span&gt;
   &lt;span class="c1"&gt;// Code for MSVC compiler here.&lt;/span&gt;
 &lt;span class="cp"&gt;#elseif __GNUCC__&lt;/span&gt;
   &lt;span class="c1"&gt;// Code for gcc/g++ here.&lt;/span&gt;
@@ -823,13 +796,12 @@ For example, to write a section of code that applies only to Windows, you would 
 &lt;span class="cp"&gt;#endif&lt;/span&gt;
 &lt;/pre&gt;
 
-
 &lt;p&gt;Most of the work I did to get everything running involved modifying blocks that look like this to get the right combination.
 Frequently, code is defined to do one thing on windows (with the assumption that only MSVC will be used) and another on Linux, even though, for MinGW, many of the Linux configurations are needed for the compiler.
 In the past, I've found myself continually searching for what the right ways to detect a given compiler, operating system, or architecture, but it turns out there is a fairly complete &lt;a href="http://sourceforge.net/p/predef/wiki/Home/"&gt;list&lt;/a&gt; where the variables indicating most common compilers and operating systems are shown.&lt;/p&gt;
 &lt;p&gt;The build system CMake also provides ways of detecting things like that.
 A few useful examples:&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nb"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;WIN32&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="nb"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;WIN32&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="c"&gt;# You're compiling for Windows&lt;/span&gt;
 &lt;span class="nb"&gt;endif&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
 &lt;span class="nb"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"${CMAKE_SIZEOF_VOID_P}"&lt;/span&gt; &lt;span class="s"&gt;EQUAL&lt;/span&gt; &lt;span class="s2"&gt;"8"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
@@ -843,7 +815,6 @@ A few useful examples:&lt;/p&gt;
 &lt;span class="nb"&gt;endif&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
 &lt;/pre&gt;
 
-
 &lt;p&gt;Now, on to some of the tricker bugs.
 Hopefully including them here can help others resolve similar errors later on.&lt;/p&gt;
 &lt;p&gt;It is a less commonly known fact that the order of compiler flags matters if you are linking against different libraries.
@@ -851,16 +822,14 @@ Hopefully including them here can help others resolve similar errors later on.&l
 As it turns out, the order of the flags for gcc also matters in some less than intuitive cases.
 After compiling libdynd, in order to compile a basic working example I had to do &lt;code&gt;g++ -std=c++11 -fPIC declare_array.cpp -ldynd&lt;/code&gt; rather than &lt;code&gt;g++ -std=c++11 -ldynd -fPIC declare_array.cpp&lt;/code&gt;.
 Running the latter would give a series of linker errors like&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;undefined reference to 'dynd::detail::memory_block_free(dynd::memory_block_data*)'
+&lt;pre class="code literal-block"&gt;&lt;span class="err"&gt;undefined reference to 'dynd::detail::memory_block_free(dynd::memory_block_data*)'&lt;/span&gt;
 &lt;/pre&gt;
-
 
 &lt;p&gt;&lt;code&gt;clang++&lt;/code&gt; accepted both orderings of the flags without complaint.&lt;/p&gt;
 &lt;p&gt;I also ran into &lt;a href="http://bugs.python.org/issue11566"&gt;this bug in Python&lt;/a&gt; where there is an unfortunate name collision between a preprocessor macro defined in Python and a function in the c++11 standard library.
 The name collision results in the unusual error&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;error: '::hypot' has not been declared
+&lt;pre class="code literal-block"&gt;&lt;span class="c"&gt;error: '::hypot' has not been declared&lt;/span&gt;
 &lt;/pre&gt;
-
 
 &lt;p&gt;coming from the c++11 standard library headers.
 It appears that a &lt;a href="http://stackoverflow.com/a/12124708/1935144"&gt;generally known solution&lt;/a&gt; is to include the standard library math header before &lt;code&gt;Python.h&lt;/code&gt;.
@@ -869,15 +838,13 @@ It worked like a charm.&lt;/p&gt;
 &lt;p&gt;The last batch of errors came from my forgetting to define the macro &lt;code&gt;MS_WIN64&lt;/code&gt; on the command line when working with the Python headers.
 That macro is used internally to indicate that a Python extension module is being compiled for a 64 bit Python installation on Windows.
 In this case, forgetting to include that flag resulted in the error&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;undefined reference to '__imp_Py_InitModule4'
+&lt;pre class="code literal-block"&gt;&lt;span class="err"&gt;undefined reference to '__imp_Py_InitModule4'&lt;/span&gt;
 &lt;/pre&gt;
-
 
 &lt;p&gt;at link time.&lt;/p&gt;
 &lt;p&gt;In trying to fix the various errors from not defining &lt;code&gt;MS_WIN64&lt;/code&gt;, I also came across errors where &lt;code&gt;np_intp&lt;/code&gt; (a typedef of &lt;code&gt;Py_intptr_t&lt;/code&gt;) was not the correct size, resulting in the error&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;error&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;cannot&lt;/span&gt; &lt;span class="n"&gt;convert&lt;/span&gt; &lt;span class="s1"&gt;'long long int*'&lt;/span&gt; &lt;span class="n"&gt;to&lt;/span&gt; &lt;span class="s1"&gt;'npy_intp* {aka int*}'&lt;/span&gt; &lt;span class="k"&gt;in&lt;/span&gt; &lt;span class="n"&gt;argument&lt;/span&gt; &lt;span class="n"&gt;passing&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="n"&gt;error&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;cannot&lt;/span&gt; &lt;span class="n"&gt;convert&lt;/span&gt; &lt;span class="s1"&gt;'long long int*'&lt;/span&gt; &lt;span class="n"&gt;to&lt;/span&gt; &lt;span class="s1"&gt;'npy_intp* {aka int*}'&lt;/span&gt; &lt;span class="k"&gt;in&lt;/span&gt; &lt;span class="n"&gt;argument&lt;/span&gt; &lt;span class="n"&gt;passing&lt;/span&gt;
 &lt;/pre&gt;
-
 
 &lt;p&gt;The fundamental problem is that the logic in the Python headers fails to detect the proper size of a pointer without some sort of extra compile switch.
 Passing the command-line argument &lt;code&gt;-DMS_WIN64&lt;/code&gt; to the compiler when compiling Python extensions was sufficient to address the issue.&lt;/p&gt;
@@ -886,7 +853,7 @@ I'll be posting a few of them soon.&lt;/p&gt;
 &lt;h4&gt;Update (6/8/2015)&lt;/h4&gt;
 &lt;p&gt;In fixing a few more compilation errors, I found another &lt;a href="http://nadeausoftware.com/articles/2012/01/c_c_tip_how_use_compiler_predefined_macros_detect_operating_system"&gt;useful table&lt;/a&gt; of C preprocessor macros that can be used to identify a given operating system.
 Among other things, it mentions that any BSD operating system can be detected using something like&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;#ifdef __unix__&lt;/span&gt;
+&lt;pre class="code literal-block"&gt;&lt;span class="cp"&gt;#ifdef __unix__&lt;/span&gt;
 &lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;sys/param.h&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
 &lt;span class="cp"&gt;#ifdef BSD&lt;/span&gt;
 &lt;span class="c1"&gt;// BSD stuff&lt;/span&gt;
@@ -894,5 +861,4 @@ Among other things, it mentions that any BSD operating system can be detected us
 &lt;span class="cp"&gt;#endif&lt;/span&gt;
 &lt;/pre&gt;
 
-
-&lt;p&gt;The &lt;a href="https://gcc.gnu.org/onlinedocs/cpp/Standard-Predefined-Macros.html#Standard-Predefined-Macros"&gt;table in the GCC manual&lt;/a&gt; also lists which preprocessor macros are required for a compiler implementing the relevant language standards.&lt;/p&gt;&lt;/div&gt;</description><guid>http://insertinterestingnamehere.github.io/posts/first-impressions-and-overcoming-compilation-errors.html</guid><pubDate>Fri, 22 May 2015 04:23:11 GMT</pubDate></item></channel></rss>
+&lt;p&gt;The &lt;a href="https://gcc.gnu.org/onlinedocs/cpp/Standard-Predefined-Macros.html#Standard-Predefined-Macros"&gt;table in the GCC manual&lt;/a&gt; also lists which preprocessor macros are required for a compiler implementing the relevant language standards.&lt;/p&gt;&lt;/div&gt;</description><guid>http://insertinterestingnamehere.github.io/posts/first-impressions-and-overcoming-compilation-errors/</guid><pubDate>Fri, 22 May 2015 04:23:11 GMT</pubDate></item></channel></rss>
